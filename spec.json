@@ -1,0 +1,26 @@
+{
+	"title": [
+		{
+			"unit": "s|m|h",
+			"time": "s,m:s,h:m:s",
+			"sound": "audiofile.wav"
+		},
+		{
+			"unit": "s|m|h",
+			"time": "s,m:s,h:m:s",
+			"sound": "audiofile.wav"
+		}
+	],
+	"title2": [
+		{
+			"unit": "s|m|h",
+			"time": "s,m:s,h:m:s",
+			"sound": "audiofile.wav"
+		},
+		{
+			"unit": "s|m|h",
+			"time": "s,m:s,h:m:s",
+			"sound": "audiofile.wav"
+		}
+	],
+}

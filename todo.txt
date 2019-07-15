@@ -1,0 +1,17 @@
+# Descrição Geral
+
+Interface para que o usuário crie avisos sonoros que serão tocados conforme o tempo estipulado.
+
+# Descrição funcional
+    - [ ] interface web poderá ser acessada sem login, caso o usuário queira salvar os painéis, precisará logar.
+    - [ ] o usuário poderá criar painéis, que serão compostos por um título e uma lista de timers.
+    - [ ] os timers, serão compostos pelos campos
+        - unit: unidade do timer (horas, minutos ou segundos)
+        - time: tempo, de acordo com a unidade selecionada
+        - repeat: se o timer se repete ou não (bool)
+        - sound: som que será tocado quando o tempo for atingido.
+    - [ ] cada painel terá um botão de start (quando pressionado vira pause), stop e exclusão.
+
+# Implementação
+    - A implementação das funcionalidades será feita em javascript.
+    - Os dados dos painéis serão salvos em json.

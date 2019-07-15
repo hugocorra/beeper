@@ -1,0 +1,14 @@
+{
+	"ioga": [
+		{
+			"unit": "s",
+			"time": 15,
+			"sound": "Airplane-ding-sound.mp3"
+		},
+		{
+			"unit": "m",
+			"time": "15:00",
+			"sound": "end.wav"
+		}
+	],
+}
