@@ -1,0 +1,92 @@
+<html>
+<head>
+    <script src="https://unpkg.com/vue"></script>
+    <script>
+        example = [
+            {
+                "title": "TITULO1",
+                "timers": [
+                    {
+                        "unit": "s|m|h",
+                        "time": "s,m:s,h:m:s",
+                        "sound": "audiofile0.wav"
+                    },
+                    {
+                        "unit": "s|m|h",
+                        "time": "s,m:s,h:m:s",
+                        "sound": "audiofile1.wav"
+                    }
+                ],
+            },
+            {
+                "title": "TITULO2",
+                "timers": [
+                    {
+                        "unit": "s|m|h",
+                        "time": "s,m:s,h:m:s",
+                        "sound": "audiofile2.wav"
+                    },
+                    {
+                        "unit": "s|m|h",
+                        "time": "s,m:s,h:m:s",
+                        "sound": "audiofile3.wav"
+                    }
+                ],
+            },
+        ]
+
+        window.onload = function () {
+            var app6 = new Vue({
+                el: '#app-6',
+                data: {
+                    timers: example
+                },
+                methods: {
+                    addTimer: function(timers)
+                    {
+                        timers.push({
+                            "unit": "S|M|H",
+                            "time": "s,m:s,h:m:s",
+                            "sound": "audiofile3.wav"
+                        })
+                    }
+                }
+            });
+        }
+
+        new_timer = function(key) {
+            alert(key)
+        }
+    </script>
+
+    <style>
+        .tpanel {
+            background: #f00
+        }
+
+        .ttitle {
+            background: #0f0
+        }
+
+        .trow {
+            background: #00f
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app-6">
+        <div v-for="timer_entry in timers" class="tpanel">
+            <div class="ttitle">-{{ timer_entry.title
+             }}</div>
+            <div v-for="timer in timer_entry.timers" class="trow">
+                <div>{{ timer.unit}}</div>
+                <div>{{ timer.time }}</div>
+                <div>{{ timer.sound }}</div>
+            </div>
+            <button v-on:click="addTimer(timer_entry.timers)">+ timer</button>
+        </div>
+    </div>
+</body>
+</html>
+
