@@ -49,6 +49,11 @@
                             "time": "s,m:s,h:m:s",
                             "sound": "audiofile3.wav"
                         })
+                    },
+                    removeTimer: function(timers, index)
+                    {
+                        console.log(timers[index], index);
+                        timers.splice(index, 1)
                     }
                 }
             });
@@ -77,12 +82,15 @@
 <body>
     <div id="app-6">
         <div v-for="timer_entry in timers" class="tpanel">
-            <div class="ttitle">-{{ timer_entry.title
-             }}</div>
-            <div v-for="timer in timer_entry.timers" class="trow">
+            <div class="ttitle">
+                <input type="text" v-model="timer_entry.title" />
+                -{{ timer_entry.title }}
+            </div>
+            <div v-for="(timer, index) in timer_entry.timers" class="trow">
                 <div>{{ timer.unit}}</div>
                 <div>{{ timer.time }}</div>
                 <div>{{ timer.sound }}</div>
+                <div><a href="#" v-on:click="removeTimer(timer_entry.timers, index)">x</a></div>
             </div>
             <button v-on:click="addTimer(timer_entry.timers)">+ timer</button>
         </div>
