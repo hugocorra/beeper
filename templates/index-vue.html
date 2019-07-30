@@ -7,13 +7,13 @@
                 "title": "TITULO1",
                 "timers": [
                     {
-                        "unit": "s|m|h",
-                        "time": "s,m:s,h:m:s",
+                        "unit": "s",
+                        "time": "30",
                         "sound": "audiofile0.wav"
                     },
                     {
-                        "unit": "s|m|h",
-                        "time": "s,m:s,h:m:s",
+                        "unit": "m",
+                        "time": "01:30",
                         "sound": "audiofile1.wav"
                     }
                 ],
@@ -22,45 +22,92 @@
                 "title": "TITULO2",
                 "timers": [
                     {
-                        "unit": "s|m|h",
-                        "time": "s,m:s,h:m:s",
+                        "unit": "h",
+                        "time": "2:10:20",
                         "sound": "audiofile2.wav"
                     },
                     {
-                        "unit": "s|m|h",
-                        "time": "s,m:s,h:m:s",
+                        "unit": "m",
+                        "time": "1",
                         "sound": "audiofile3.wav"
                     }
                 ],
             },
         ]
 
-        window.onload = function () {
+        // convert any time format to seconds
+        any_to_seconds = function(time, unit)
+        {
+            value = 0;
+
+            if (unit == 's') // seconds
+            {
+                value = parseInt(unit)
+            }
+            else if (unit == 'm')
+            {
+
+            }
+            else if (unit == 'h')
+            {
+
+            }
+            else
+            {
+                console.log('invalid unit')
+                return;
+            }
+
+            if (isNaN(value))
+            {
+                console.log('invalid timer value')
+                return
+            }
+        }
+
+        window.onload = function ()
+        {
             var app6 = new Vue({
                 el: '#app-6',
                 data: {
-                    timers: example
+                    data: example,
                 },
                 methods: {
                     addTimer: function(timers)
                     {
                         timers.push({
-                            "unit": "S|M|H",
-                            "time": "s,m:s,h:m:s",
-                            "sound": "audiofile3.wav"
+                            "unit": "",
+                            "time": "",
+                            "sound": ""
                         })
+                    },
+                    addPanel: function()
+                    {
+                        panel = {
+                            "title": "NewPanel",
+                            "timers": [],
+                        }
+
+                        this.addTimer(panel["timers"])
+                        this.data.push(panel)
                     },
                     removeTimer: function(timers, index)
                     {
                         console.log(timers[index], index);
                         timers.splice(index, 1)
+                    },
+                    removePanel: function(panels, index)
+                    {
+                        panels.splice(index, 1)
+                    },
+                    startTimers: function(panel_index)
+                    {
+                    },
+                    stopTimers: function(panel_index)
+                    {
                     }
                 }
             });
-        }
-
-        new_timer = function(key) {
-            alert(key)
         }
     </script>
 
@@ -81,18 +128,34 @@
 
 <body>
     <div id="app-6">
-        <div v-for="timer_entry in timers" class="tpanel">
+        <button v-on:click="addPanel()">+ panel</button>
+        <div v-for="(panel, panel_idx) in data" class="tpanel">
             <div class="ttitle">
-                <input type="text" v-model="timer_entry.title" />
-                -{{ timer_entry.title }}
+                <input type="text" v-model="panel.title" />
+                <div><a href="#" v-on:click="removePanel(data, index)">x</a></div>
             </div>
-            <div v-for="(timer, index) in timer_entry.timers" class="trow">
-                <div>{{ timer.unit}}</div>
-                <div>{{ timer.time }}</div>
-                <div>{{ timer.sound }}</div>
-                <div><a href="#" v-on:click="removeTimer(timer_entry.timers, index)">x</a></div>
+            <div v-for="(timer, index) in panel.timers" class="trow">
+                <div>
+                    <select v-model="timer.unit">
+                        <option value="s">seconds</option>
+                        <option value="m">minutes</option>
+                        <option value="h">hours</option>
+                    </select>
+                </div>
+                <div><input v-model="timer.time" /></div>
+                <div>
+                    <select v-model="timer.sound">
+                        <option value="audiofile0.wav">Beep</option>
+                        <option value="audiofile1.wav">Good Morning</option>
+                        <option value="audiofile2.wav">Seat Belt</option>
+                        <option value="audiofile3.wav">Chicken</option>
+                    </select>
+                </div>
+                <div><a href="#" v-on:click="removeTimer(panel.timers, index)">x</a></div>
             </div>
-            <button v-on:click="addTimer(timer_entry.timers)">+ timer</button>
+            <button v-on:click="addTimer(panel.timers)">+ timer</button>
+            <button v-if="!is_running" v-on:click="startTimers(panel_idx)">start</button>
+            <button v-if="is_running" v-on:click="stopTimers(panel_idx)">stop</button>
         </div>
     </div>
 </body>
