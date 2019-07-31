@@ -8,13 +8,15 @@
                 "timers": [
                     {
                         "unit": "s",
-                        "time": "30",
-                        "sound": "audiofile0.wav"
+                        "time": "3",
+                        "sound": "audiofile0.wav",
+                        "repeat": true,
                     },
                     {
                         "unit": "m",
                         "time": "01:30",
-                        "sound": "audiofile1.wav"
+                        "sound": "audiofile1.wav",
+                        "repeat": true,
                     }
                 ],
             },
@@ -24,25 +26,29 @@
                     {
                         "unit": "h",
                         "time": "2:10:20",
-                        "sound": "audiofile2.wav"
+                        "sound": "audiofile2.wav",
+                        "repeat": false,
                     },
                     {
                         "unit": "m",
                         "time": "1",
-                        "sound": "audiofile3.wav"
+                        "sound": "audiofile3.wav",
+                        "repeat": true,
                     }
                 ],
             },
         ]
 
+        var exec_timers = {};
+
         // convert any time format to seconds
-        any_to_seconds = function(time, unit)
+        any_to_miliseconds = function(time, unit)
         {
             value = 0;
 
             if (unit == 's') // seconds
             {
-                value = parseInt(unit)
+                value = parseInt(time) * 1000;
             }
             else if (unit == 'm')
             {
@@ -63,6 +69,8 @@
                 console.log('invalid timer value')
                 return
             }
+
+            return value;
         }
 
         window.onload = function ()
@@ -71,6 +79,7 @@
                 el: '#app-6',
                 data: {
                     data: example,
+                    timer_logs: ['logs...'],
                 },
                 methods: {
                     addTimer: function(timers)
@@ -78,7 +87,8 @@
                         timers.push({
                             "unit": "",
                             "time": "",
-                            "sound": ""
+                            "sound": "",
+                            "repeat": false,
                         })
                     },
                     addPanel: function()
@@ -102,6 +112,28 @@
                     },
                     startTimers: function(panel_index)
                     {
+                        console.log('teste');
+                        instances = []
+                        for (timer_index in this.data[panel_index]['timers'])
+                        {
+                            console.log(this.data[panel_index]['timers'][timer_index])
+                            timer = this.data[panel_index]['timers'][timer_index];
+                            time = any_to_miliseconds(timer.time, timer.unit); 
+
+                            if (timer.repeat)
+                            {
+                                // TODO: 
+                                // console.log(this.timer_logs);
+                                // t = setInterval(function(){ this.timer_logs.push('int ok') }, time);
+                                // instances.push(t)
+                            }
+                            else
+                            {
+                                // t = setTimeout(function() { this.timer_logs.push('tmo ok') }, time);
+                                // instances.push(t);
+                            }
+                        }
+
                     },
                     stopTimers: function(panel_index)
                     {
@@ -122,6 +154,11 @@
 
         .trow {
             background: #00f
+        }
+
+        .tlogs {
+            background: #000;
+            color: #FFF;
         }
     </style>
 </head>
@@ -151,11 +188,17 @@
                         <option value="audiofile3.wav">Chicken</option>
                     </select>
                 </div>
+                <div>
+                    <input type="checkbox" v-model="timer.repeat" />
+                </div>
                 <div><a href="#" v-on:click="removeTimer(panel.timers, index)">x</a></div>
             </div>
             <button v-on:click="addTimer(panel.timers)">+ timer</button>
-            <button v-if="!is_running" v-on:click="startTimers(panel_idx)">start</button>
-            <button v-if="is_running" v-on:click="stopTimers(panel_idx)">stop</button>
+            <button v-if="true" v-on:click="startTimers(panel_idx)">start</button>
+            <button v-if="true" v-on:click="stopTimers(panel_idx)">stop</button>
+        </div>
+        <div v-for='text in timer_logs' class="tlogs">
+            <div>{{ text }}</div>
         </div>
     </div>
 </body>
