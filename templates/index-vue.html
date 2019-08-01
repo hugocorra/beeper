@@ -12,12 +12,12 @@
                         "sound": "audiofile0.wav",
                         "repeat": true,
                     },
-                    {
-                        "unit": "m",
-                        "time": "01:30",
-                        "sound": "audiofile1.wav",
-                        "repeat": true,
-                    }
+                    // {
+                    //     "unit": "m",
+                    //     "time": "01:30",
+                    //     "sound": "audiofile1.wav",
+                    //     "repeat": true,
+                    // }
                 ],
             },
             {
@@ -52,6 +52,7 @@
             }
             else if (unit == 'm')
             {
+                // accepts: 99, 99:99
 
             }
             else if (unit == 'h')
@@ -103,7 +104,6 @@
                     },
                     removeTimer: function(timers, index)
                     {
-                        console.log(timers[index], index);
                         timers.splice(index, 1)
                     },
                     removePanel: function(panels, index)
@@ -112,31 +112,41 @@
                     },
                     startTimers: function(panel_index)
                     {
-                        console.log('teste');
-                        instances = []
+                        this.stopTimers(panel_index);
+                        exec_timers[panel_index] = {}
+
                         for (timer_index in this.data[panel_index]['timers'])
                         {
-                            console.log(this.data[panel_index]['timers'][timer_index])
                             timer = this.data[panel_index]['timers'][timer_index];
-                            time = any_to_miliseconds(timer.time, timer.unit); 
+                            time = any_to_miliseconds(timer.time, timer.unit);
 
                             if (timer.repeat)
                             {
-                                // TODO: 
-                                // console.log(this.timer_logs);
-                                // t = setInterval(function(){ this.timer_logs.push('int ok') }, time);
-                                // instances.push(t)
+                                t = setInterval(function(){ this.timer_logs.push('int ok') }.bind(this), time);
+                                exec_timers[panel_index][timer_index] = {'type': 'i', 'var': t}
                             }
                             else
                             {
-                                // t = setTimeout(function() { this.timer_logs.push('tmo ok') }, time);
-                                // instances.push(t);
+                                t = setTimeout(function() { this.timer_logs.push('tmo ok') }.bind(this), time);
+                                exec_timers[panel_index][timer_index] = {'type': 't', 'var': t}
                             }
                         }
 
                     },
                     stopTimers: function(panel_index)
                     {
+                        if (panel_index in exec_timers)
+                        {
+                            for (var panel_ in exec_timers[panel_index])
+                            {
+                                if (exec_timers[panel_]['type'] == 'i')
+                                    clearInterval(exec_timers[panel_]['var']);
+                                else
+                                    clearTimeout(exec_timers[panel_]['var']);
+                            }
+                        }
+
+                        alert('stop executed')
                     }
                 }
             });
