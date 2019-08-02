@@ -1,7 +1,13 @@
 <html>
 <head>
     <script src="https://unpkg.com/vue"></script>
+    <script src="js/sounds.js"></script>
     <script>
+        function beep() {
+            sound['beep'].play();
+            //snd_airplane.play();
+        }
+
         example = [
             {
                 "title": "TITULO1",
@@ -122,12 +128,12 @@
 
                             if (timer.repeat)
                             {
-                                t = setInterval(function(){ this.timer_logs.push('int ok') }.bind(this), time);
+                                t = setInterval(function(){ this.timer_logs.push('int ok'); beep() }.bind(this), time);
                                 exec_timers[panel_index][timer_index] = {'type': 'i', 'var': t}
                             }
                             else
                             {
-                                t = setTimeout(function() { this.timer_logs.push('tmo ok') }.bind(this), time);
+                                t = setTimeout(function() { this.timer_logs.push('tmo ok'); beep() }.bind(this), time);
                                 exec_timers[panel_index][timer_index] = {'type': 't', 'var': t}
                             }
                         }
@@ -137,16 +143,16 @@
                     {
                         if (panel_index in exec_timers)
                         {
-                            for (var panel_ in exec_timers[panel_index])
+                            for (var timer_ in exec_timers[panel_index])
                             {
-                                if (exec_timers[panel_]['type'] == 'i')
-                                    clearInterval(exec_timers[panel_]['var']);
+                                if (exec_timers[panel_index][timer_]['type'] === "i")
+                                    clearInterval(exec_timers[panel_index][timer_]['var']);
                                 else
-                                    clearTimeout(exec_timers[panel_]['var']);
+                                    clearTimeout(exec_timers[panel_index][timer_]['var']);
                             }
                         }
 
-                        alert('stop executed')
+
                     }
                 }
             });
