@@ -3,8 +3,9 @@
     <script src="https://unpkg.com/vue"></script>
     <script src="js/sounds.js"></script>
     <script>
-        function beep() {
-            sounds['beep'].play();
+        function beep(sound_str) {
+            sounds[sound_str].play();
+            console.log(sound_str)
             //snd_airplane.play();
         }
 
@@ -14,16 +15,16 @@
                 "timers": [
                     {
                         "unit": "s",
-                        "time": "3",
-                        "sound": "audiofile0.wav",
+                        "time": "2",
+                        "sound": "beep",
                         "repeat": true,
                     },
-                    // {
-                    //     "unit": "m",
-                    //     "time": "01:30",
-                    //     "sound": "audiofile1.wav",
-                    //     "repeat": true,
-                    // }
+                    {
+                        "unit": "s",
+                        "time": "3",
+                        "sound": "seatbelt",
+                        "repeat": true,
+                    }
                 ],
             },
             {
@@ -59,6 +60,7 @@
             else if (unit == 'm')
             {
                 // accepts: 99, 99:99
+                
 
             }
             else if (unit == 'h')
@@ -78,6 +80,20 @@
             }
 
             return value;
+        }
+
+        create_interval = function(instance, milliseconds, sound)
+        {
+            return setInterval(function(){
+                instance.timer_logs.push('int ok');
+                beep(sound) }.bind(instance), time);
+        }
+
+        create_timeout = function(instance, milliseconds, sound)
+        {
+            return setTimeout(function(){
+                instance.timer_logs.push('tm ok');
+                beep(sound) }.bind(instance), time);
         }
 
         window.onload = function ()
@@ -128,12 +144,14 @@
 
                             if (timer.repeat)
                             {
-                                t = setInterval(function(){ this.timer_logs.push('int ok'); beep() }.bind(this), time);
+                                var sound_str = this.data[panel_index]['timers'][timer_index]['sound'];
+                                t = create_interval(this, time, sound_str)
                                 exec_timers[panel_index][timer_index] = {'type': 'i', 'var': t}
                             }
                             else
                             {
-                                t = setTimeout(function() { this.timer_logs.push('tmo ok'); beep() }.bind(this), time);
+                                var sound_str = this.data[panel_index]['timers'][timer_index]['sound'];
+                                t = create_timeout(this, time, sound_str)
                                 exec_timers[panel_index][timer_index] = {'type': 't', 'var': t}
                             }
                         }
@@ -198,10 +216,10 @@
                 <div><input v-model="timer.time" /></div>
                 <div>
                     <select v-model="timer.sound">
-                        <option value="audiofile0.wav">Beep</option>
-                        <option value="audiofile1.wav">Good Morning</option>
-                        <option value="audiofile2.wav">Seat Belt</option>
-                        <option value="audiofile3.wav">Chicken</option>
+                        <option value="beep">Beep</option>
+                        <!-- <option value="audiofile1.wav">Good Morning</option> -->
+                        <option value="seatbelt">Seat Belt</option>
+                        <!-- <option value="audiofile3.wav">Chicken</option> -->
                     </select>
                 </div>
                 <div>

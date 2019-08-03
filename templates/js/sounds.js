@@ -4,5 +4,5 @@ var snd_beep = new Audio("data:audio/wav;base64,//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYL
 
 sounds = {
     'beep': snd_beep,
-    'seatbealt': snd_airplane,
+    'seatbelt': snd_airplane,
 }
