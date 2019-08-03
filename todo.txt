@@ -15,3 +15,14 @@ Interface para que o usuário crie avisos sonoros que serão tocados conforme o 
 # Implementação
     - A implementação das funcionalidades será feita em javascript.
     - Os dados dos painéis serão salvos em json.
+
+
+# Próximos passos
+    - [ ] implementar suporte para os sons que foram escolhidos.
+    - [ ] implementar tratamento para as unidades de tempo.
+    - [ ] implementar comunicação com o servidor.
+    -´[ ] implementar interface mais bonita.
+    - [ ] implementar countdown.
+    - [ ] implementar aviso visual de timer, para cada painel.
+    - [ ] implementar opção avançada onde usuário pode definir um texto que será exibido no aviso visual.
+    
