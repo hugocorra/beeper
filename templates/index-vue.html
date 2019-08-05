@@ -59,13 +59,30 @@
             }
             else if (unit == 'm')
             {
-                // accepts: 99, 99:99
-                
+                var values = time.split(':')
 
+                if (values.length > 0)
+                    value = parseInt(values[0]) * 60;
+
+                if (values.length > 1)
+                    value += parseInt(values[1]);
+
+                value *= 1000;
             }
             else if (unit == 'h')
             {
+                var values = time.split(':')
+                
+                if (values.length > 0)
+                    value = parseInt(values[0]) * 3600;
 
+                if (values.length > 1)
+                    value += parseInt(values[1]) * 60;
+                
+                if (values.length > 2)
+                    value += parseInt(values[2]);
+
+                value *= 1000;
             }
             else
             {
@@ -86,14 +103,31 @@
         {
             return setInterval(function(){
                 instance.timer_logs.push('int ok');
-                beep(sound) }.bind(instance), time);
+                beep(sound)
+            }.bind(instance), time);
         }
 
         create_timeout = function(instance, milliseconds, sound)
         {
             return setTimeout(function(){
                 instance.timer_logs.push('tm ok');
-                beep(sound) }.bind(instance), time);
+                beep(sound)
+            }.bind(instance), time);
+        }
+
+        // main interval, updates countdowns
+        scheduler = function() {
+            setInterval(function(){
+                for (panel_idx in exec_timers)
+                {
+                    for (timer_idx in exec_timers)
+                    {
+                        // tinfo = exec_timers[panel_idx][timer_idx];
+                        // if (tinfo['status'] == 'started')
+                        //     $('#countdown-' + panel_idx + '-' + 'timer_idx').html('lol');
+                    }
+                }
+            }, 1000);
         }
 
         window.onload = function ()
@@ -146,13 +180,13 @@
                             {
                                 var sound_str = this.data[panel_index]['timers'][timer_index]['sound'];
                                 t = create_interval(this, time, sound_str)
-                                exec_timers[panel_index][timer_index] = {'type': 'i', 'var': t}
+                                exec_timers[panel_index][timer_index] = {'type': 'i', 'var': t, 'status': 'started'}
                             }
                             else
                             {
                                 var sound_str = this.data[panel_index]['timers'][timer_index]['sound'];
                                 t = create_timeout(this, time, sound_str)
-                                exec_timers[panel_index][timer_index] = {'type': 't', 'var': t}
+                                exec_timers[panel_index][timer_index] = {'type': 't', 'var': t, 'status': 'started'}
                             }
                         }
 
@@ -174,6 +208,8 @@
                     }
                 }
             });
+
+            scheduler();
         }
     </script>
 
@@ -225,6 +261,7 @@
                 <div>
                     <input type="checkbox" v-model="timer.repeat" />
                 </div>
+                <div :id="'countdown-' + panel_idx + '-' + index">00:00:00</div>
                 <div><a href="#" v-on:click="removeTimer(panel.timers, index)">x</a></div>
             </div>
             <button v-on:click="addTimer(panel.timers)">+ timer</button>

@@ -18,11 +18,12 @@ Interface para que o usuário crie avisos sonoros que serão tocados conforme o 
 
 
 # Próximos passos
-    - [ ] implementar suporte para os sons que foram escolhidos.
-    - [ ] implementar tratamento para as unidades de tempo.
-    - [ ] implementar comunicação com o servidor.
-    -´[ ] implementar interface mais bonita.
+    - [x] implementar suporte para os sons que foram escolhidos.
+    - [x] implementar tratamento para as unidades de tempo.
     - [ ] implementar countdown.
+    - [ ] implementar comunicação com o servidor.
+    - [ ] implementar interface mais bonita.
+    - [ ] adicionar mais opções de som.
     - [ ] implementar aviso visual de timer, para cada painel.
     - [ ] implementar opção avançada onde usuário pode definir um texto que será exibido no aviso visual.
     
