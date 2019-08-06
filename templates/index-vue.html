@@ -1,5 +1,6 @@
 <html>
 <head>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue"></script>
     <script src="js/sounds.js"></script>
     <script>
@@ -23,7 +24,7 @@
                         "unit": "s",
                         "time": "3",
                         "sound": "seatbelt",
-                        "repeat": true,
+                        "repeat": false,
                     }
                 ],
             },
@@ -99,20 +100,48 @@
             return value;
         }
 
-        create_interval = function(instance, milliseconds, sound)
+        create_interval = function(instance, milliseconds, sound, panel_idx, timer_idx, time_seconds)
         {
             return setInterval(function(){
-                instance.timer_logs.push('int ok');
+                exec_timers[panel_idx][timer_idx]['time'] = time_seconds;
+                instance.timer_logs.push('int ok p:' + panel_idx + '  t:' + timer_idx);
                 beep(sound)
             }.bind(instance), time);
         }
 
-        create_timeout = function(instance, milliseconds, sound)
+        create_timeout = function(instance, milliseconds, sound, panel_idx, timer_idx)
         {
             return setTimeout(function(){
+                exec_timers[panel_idx][timer_idx]['status'] = 'finished';
                 instance.timer_logs.push('tm ok');
                 beep(sound)
             }.bind(instance), time);
+        }
+
+
+        seconds_to_hhmmss = function(seconds)
+        {
+            hh = 0
+            mm = 0
+            ss = 0
+
+            while (seconds >= 3600)
+            {
+                hh += 1
+                seconds -= 3600;
+            }
+
+            while (seconds >= 60)
+            {
+                mm += 1;
+                seconds -= 60;
+            }
+
+            ss = seconds;
+
+            return String(hh).padStart(2, '0') + ':' +
+                   String(mm).padStart(2, '0') + ':' +
+                   String(ss).padStart(2, '0');
         }
 
         // main interval, updates countdowns
@@ -120,11 +149,16 @@
             setInterval(function(){
                 for (panel_idx in exec_timers)
                 {
-                    for (timer_idx in exec_timers)
+                    for (timer_idx in exec_timers[panel_idx])
                     {
-                        // tinfo = exec_timers[panel_idx][timer_idx];
-                        // if (tinfo['status'] == 'started')
-                        //     $('#countdown-' + panel_idx + '-' + 'timer_idx').html('lol');
+                        tinfo = exec_timers[panel_idx][timer_idx];
+                        if (tinfo['status'] == 'started')
+                        {
+                            tinfo['time'] = tinfo['time'] - 1;
+                            str_time = seconds_to_hhmmss(tinfo['time']);
+                            $('#countdown-' + panel_idx + '-' + timer_idx).html(str_time);
+                            //console.log('#countdown-' + panel_idx + '-' + timer_idx)
+                        }
                     }
                 }
             }, 1000);
@@ -175,18 +209,19 @@
                         {
                             timer = this.data[panel_index]['timers'][timer_index];
                             time = any_to_miliseconds(timer.time, timer.unit);
+                            var time_seconds = parseInt(time / 1000.)
 
                             if (timer.repeat)
                             {
                                 var sound_str = this.data[panel_index]['timers'][timer_index]['sound'];
-                                t = create_interval(this, time, sound_str)
-                                exec_timers[panel_index][timer_index] = {'type': 'i', 'var': t, 'status': 'started'}
+                                t = create_interval(this, time, sound_str, panel_index, timer_index, time_seconds)
+                                exec_timers[panel_index][timer_index] = {'type': 'i', 'var': t, 'status': 'started', 'time': time_seconds};;
                             }
                             else
                             {
                                 var sound_str = this.data[panel_index]['timers'][timer_index]['sound'];
-                                t = create_timeout(this, time, sound_str)
-                                exec_timers[panel_index][timer_index] = {'type': 't', 'var': t, 'status': 'started'}
+                                t = create_timeout(this, time, sound_str, panel_index, timer_index,)
+                                exec_timers[panel_index][timer_index] = {'type': 't', 'var': t, 'status': 'started', 'time': time_seconds}
                             }
                         }
 
