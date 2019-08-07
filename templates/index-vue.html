@@ -4,8 +4,32 @@
     <script src="https://unpkg.com/vue"></script>
     <script src="/static/js/sounds.js"></script>
     <script>
-        function beep(sound_str) {
+        beep = function(sound_str) {
             sounds[sound_str].play();
+        }
+
+        // save = function() {
+        //     $.post("/save", {'data': example })
+        //     .done(function(data) {
+        //         alert('daihdaiush')
+        //     });
+        // }
+
+        save = function() {
+            $.ajax({
+                url: '/save',
+                dataType: 'json',
+                type: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify( {'data': example} ),
+                processData: false,
+                success: function( data, textStatus, jQxhr ){
+                    alert('sucesso')
+                },
+                error: function( jqXhr, textStatus, errorThrown ){
+                    alert('ops...')
+                }
+            });
         }
 
         example = [
