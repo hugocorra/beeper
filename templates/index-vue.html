@@ -2,12 +2,10 @@
 <head>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/vue"></script>
-    <script src="js/sounds.js"></script>
+    <script src="/static/js/sounds.js"></script>
     <script>
         function beep(sound_str) {
             sounds[sound_str].play();
-            console.log(sound_str)
-            //snd_airplane.play();
         }
 
         example = [
@@ -117,7 +115,6 @@
                 beep(sound)
             }.bind(instance), time);
         }
-
 
         seconds_to_hhmmss = function(seconds)
         {
