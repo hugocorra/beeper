@@ -15,7 +15,7 @@
         //     });
         // }
 
-        save = function() {
+        save_timers = function() {
             $.ajax({
                 url: '/save',
                 dataType: 'json',
@@ -24,6 +24,25 @@
                 data: JSON.stringify( {'data': example} ),
                 processData: false,
                 success: function( data, textStatus, jQxhr ){
+                    console.log(data)
+                    alert('sucesso')
+                },
+                error: function( jqXhr, textStatus, errorThrown ){
+                    alert('ops...')
+                }
+            });
+        }
+
+        load_timers = function() {
+            $.ajax({
+                url: '/load',
+                dataType: 'json',
+                type: 'get',
+                contentType: 'application/json',
+                processData: false,
+                success: function( data, textStatus, jQxhr ){
+                    console.log(data);
+                    example = data['data']
                     alert('sucesso')
                 },
                 error: function( jqXhr, textStatus, errorThrown ){
