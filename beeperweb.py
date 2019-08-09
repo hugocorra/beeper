@@ -30,7 +30,7 @@ def load():
     except Exception as e:
         return {'status': 'NOK', 'what': str(e)}
 
-    return {'status': 'OK', 'data': json_contents }
+    return {'status': 'OK', 'data': json_contents['data']}
 
 
 @route('/static/<path:path>')

@@ -8,26 +8,19 @@
             sounds[sound_str].play();
         }
 
-        // save = function() {
-        //     $.post("/save", {'data': example })
-        //     .done(function(data) {
-        //         alert('daihdaiush')
-        //     });
-        // }
-
         save_timers = function() {
             $.ajax({
                 url: '/save',
                 dataType: 'json',
                 type: 'post',
                 contentType: 'application/json',
-                data: JSON.stringify( {'data': example} ),
+                data: JSON.stringify({'data': example}),
                 processData: false,
-                success: function( data, textStatus, jQxhr ){
+                success: function(data, textStatus, jQxhr){
                     console.log(data)
                     alert('sucesso')
                 },
-                error: function( jqXhr, textStatus, errorThrown ){
+                error: function(jqXhr, textStatus, errorThrown){
                     alert('ops...')
                 }
             });
@@ -40,54 +33,18 @@
                 type: 'get',
                 contentType: 'application/json',
                 processData: false,
-                success: function( data, textStatus, jQxhr ){
+                success: function(data, textStatus, jQxhr){
                     console.log(data);
                     example = data['data']
-                    alert('sucesso')
+                    application_load()
                 },
-                error: function( jqXhr, textStatus, errorThrown ){
+                error: function(jqXhr, textStatus, errorThrown){
                     alert('ops...')
                 }
             });
         }
 
-        example = [
-            {
-                "title": "TITULO1",
-                "timers": [
-                    {
-                        "unit": "s",
-                        "time": "2",
-                        "sound": "beep",
-                        "repeat": true,
-                    },
-                    {
-                        "unit": "s",
-                        "time": "3",
-                        "sound": "seatbelt",
-                        "repeat": false,
-                    }
-                ],
-            },
-            {
-                "title": "TITULO2",
-                "timers": [
-                    {
-                        "unit": "h",
-                        "time": "2:10:20",
-                        "sound": "audiofile2.wav",
-                        "repeat": false,
-                    },
-                    {
-                        "unit": "m",
-                        "time": "1",
-                        "sound": "audiofile3.wav",
-                        "repeat": true,
-                    }
-                ],
-            },
-        ]
-
+        example = null;
         var exec_timers = {};
 
         // convert any time format to seconds
@@ -204,7 +161,7 @@
             }, 1000);
         }
 
-        window.onload = function ()
+        application_load = function()
         {
             var app6 = new Vue({
                 el: '#app-6',
@@ -285,6 +242,11 @@
             });
 
             scheduler();
+        }
+
+        window.onload = function ()
+        {
+            load_timers();
         }
     </script>
 
