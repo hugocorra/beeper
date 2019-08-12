@@ -15,6 +15,7 @@ def save():
     try:
         #from IPython import embed; embed()
         with open('mydb.txt', 'w') as db:
+            print('salvando...')
             json.dump(request.json, db)
     except Exception as e:
         return {'status': 'NOK', 'what': str(e)}

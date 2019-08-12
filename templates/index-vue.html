@@ -46,6 +46,7 @@
 
         example = null;
         var exec_timers = {};
+        var last_change = null;
 
         // convert any time format to seconds
         any_to_miliseconds = function(time, unit)
@@ -97,6 +98,7 @@
 
             return value;
         }
+
 
         create_interval = function(instance, milliseconds, sound, panel_idx, timer_idx, time_seconds)
         {
@@ -161,6 +163,22 @@
             }, 1000);
         }
 
+        // TODO: não estou muito confiante nessa função, melhorar implementação para 
+        // evitar race conditions.
+        save_interval = function()
+        {
+            if (last_change)
+            {
+                now = Date.now();
+                if (now - last_change > 5000.0) // last change made +5s ago.
+                {
+                    last_change = null;
+                    save_timers();
+                }
+            }
+        }
+
+
         application_load = function()
         {
             var app6 = new Vue({
@@ -168,6 +186,14 @@
                 data: {
                     data: example,
                     timer_logs: ['logs...'],
+                },
+                watch: {
+                    data: {
+                        handler: function(newval, oldval) {
+                            last_change = Date.now();
+                        },
+                        deep: true,
+                    }
                 },
                 methods: {
                     addTimer: function(timers)
@@ -247,6 +273,7 @@
         window.onload = function ()
         {
             load_timers();
+            setInterval(save_interval, 3000);
         }
     </script>
 
