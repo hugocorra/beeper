@@ -392,7 +392,7 @@
                                             </select>
                                         </div>
                                         <div>
-                                            <input type="checkbox" v-model="timer.repeat" class="form-control form-control-sm" />
+                                            <input type="checkbox" v-model="timer.repeat" />
                                         </div>
                                         <div :id="'countdown-' + panel_idx + '-' + index">00:00:00</div>
                                         <div><a href="#" v-on:click="removeTimer(panel.timers, index)">x</a></div>
