@@ -22,7 +22,7 @@ Interface para que o usuário crie avisos sonoros que serão tocados conforme o 
     - [x] implementar tratamento para as unidades de tempo.
     - [x] implementar countdown.
     - [x] testar countdown.
-    - [ ] implementar comunicação com o servidor.
+    - [x] implementar comunicação com o servidor.
     - [ ] implementar interface mais bonita.
     - [ ] adicionar mais opções de som.
     - [ ] implementar aviso visual de timer, para cada painel.

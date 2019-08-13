@@ -1,341 +1,431 @@
-<html>
-<head>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/vue"></script>
-    <script src="/static/js/sounds.js"></script>
-    <script>
-        beep = function(sound_str) {
-            sounds[sound_str].play();
-        }
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+        <meta name="generator" content="Jekyll v3.8.5">
+        <title>BEEPER</title>
 
-        save_timers = function() {
-            $.ajax({
-                url: '/save',
-                dataType: 'json',
-                type: 'post',
-                contentType: 'application/json',
-                data: JSON.stringify({'data': example}),
-                processData: false,
-                success: function(data, textStatus, jQxhr){
-                    console.log(data)
-                    alert('sucesso')
-                },
-                error: function(jqXhr, textStatus, errorThrown){
-                    alert('ops...')
-                }
-            });
-        }
+        <!-- <link rel="canonical" href="https://getbootstrap.com/docs/4.3/examples/navbar-static/"> -->
 
-        load_timers = function() {
-            $.ajax({
-                url: '/load',
-                dataType: 'json',
-                type: 'get',
-                contentType: 'application/json',
-                processData: false,
-                success: function(data, textStatus, jQxhr){
-                    console.log(data);
-                    example = data['data']
-                    application_load()
-                },
-                error: function(jqXhr, textStatus, errorThrown){
-                    alert('ops...')
-                }
-            });
-        }
+        <!-- Bootstrap core CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-        example = null;
-        var exec_timers = {};
-        var last_change = null;
+        <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 
-        // convert any time format to seconds
-        any_to_miliseconds = function(time, unit)
-        {
-            value = 0;
-
-            if (unit == 's') // seconds
-            {
-                value = parseInt(time) * 1000;
-            }
-            else if (unit == 'm')
-            {
-                var values = time.split(':')
-
-                if (values.length > 0)
-                    value = parseInt(values[0]) * 60;
-
-                if (values.length > 1)
-                    value += parseInt(values[1]);
-
-                value *= 1000;
-            }
-            else if (unit == 'h')
-            {
-                var values = time.split(':')
-                
-                if (values.length > 0)
-                    value = parseInt(values[0]) * 3600;
-
-                if (values.length > 1)
-                    value += parseInt(values[1]) * 60;
-                
-                if (values.length > 2)
-                    value += parseInt(values[2]);
-
-                value *= 1000;
-            }
-            else
-            {
-                console.log('invalid unit')
-                return;
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/vue"></script>
+        <script src="/static/js/sounds.js"></script>
+        <script>
+            beep = function(sound_str) {
+                sounds[sound_str].play();
             }
 
-            if (isNaN(value))
-            {
-                console.log('invalid timer value')
-                return
+            save_timers = function() {
+                $.ajax({
+                    url: '/save',
+                    dataType: 'json',
+                    type: 'post',
+                    contentType: 'application/json',
+                    data: JSON.stringify({'data': example}),
+                    processData: false,
+                    success: function(data, textStatus, jQxhr){
+                        console.log(data)
+                        alert('sucesso')
+                    },
+                    error: function(jqXhr, textStatus, errorThrown){
+                        alert('ops...')
+                    }
+                });
             }
 
-            return value;
-        }
-
-
-        create_interval = function(instance, milliseconds, sound, panel_idx, timer_idx, time_seconds)
-        {
-            return setInterval(function(){
-                exec_timers[panel_idx][timer_idx]['time'] = time_seconds;
-                instance.timer_logs.push('int ok p:' + panel_idx + '  t:' + timer_idx);
-                beep(sound)
-            }.bind(instance), time);
-        }
-
-        create_timeout = function(instance, milliseconds, sound, panel_idx, timer_idx)
-        {
-            return setTimeout(function(){
-                exec_timers[panel_idx][timer_idx]['status'] = 'finished';
-                instance.timer_logs.push('tm ok');
-                beep(sound)
-            }.bind(instance), time);
-        }
-
-        seconds_to_hhmmss = function(seconds)
-        {
-            hh = 0
-            mm = 0
-            ss = 0
-
-            while (seconds >= 3600)
-            {
-                hh += 1
-                seconds -= 3600;
+            load_timers = function() {
+                $.ajax({
+                    url: '/load',
+                    dataType: 'json',
+                    type: 'get',
+                    contentType: 'application/json',
+                    processData: false,
+                    success: function(data, textStatus, jQxhr){
+                        console.log(data);
+                        example = data['data']
+                        application_load()
+                    },
+                    error: function(jqXhr, textStatus, errorThrown){
+                        alert('ops...')
+                    }
+                });
             }
 
-            while (seconds >= 60)
+            example = null;
+            var exec_timers = {};
+            var last_change = null;
+
+            // convert any time format to seconds
+            any_to_miliseconds = function(time, unit)
             {
-                mm += 1;
-                seconds -= 60;
-            }
+                value = 0;
 
-            ss = seconds;
-
-            return String(hh).padStart(2, '0') + ':' +
-                   String(mm).padStart(2, '0') + ':' +
-                   String(ss).padStart(2, '0');
-        }
-
-        // main interval, updates countdowns
-        scheduler = function() {
-            setInterval(function(){
-                for (panel_idx in exec_timers)
+                if (unit == 's') // seconds
                 {
-                    for (timer_idx in exec_timers[panel_idx])
+                    value = parseInt(time) * 1000;
+                }
+                else if (unit == 'm')
+                {
+                    var values = time.split(':')
+
+                    if (values.length > 0)
+                        value = parseInt(values[0]) * 60;
+
+                    if (values.length > 1)
+                        value += parseInt(values[1]);
+
+                    value *= 1000;
+                }
+                else if (unit == 'h')
+                {
+                    var values = time.split(':')
+                    
+                    if (values.length > 0)
+                        value = parseInt(values[0]) * 3600;
+
+                    if (values.length > 1)
+                        value += parseInt(values[1]) * 60;
+                    
+                    if (values.length > 2)
+                        value += parseInt(values[2]);
+
+                    value *= 1000;
+                }
+                else
+                {
+                    console.log('invalid unit')
+                    return;
+                }
+
+                if (isNaN(value))
+                {
+                    console.log('invalid timer value')
+                    return
+                }
+
+                return value;
+            }
+
+
+            create_interval = function(instance, milliseconds, sound, panel_idx, timer_idx, time_seconds)
+            {
+                return setInterval(function(){
+                    exec_timers[panel_idx][timer_idx]['time'] = time_seconds;
+                    instance.timer_logs.push('int ok p:' + panel_idx + '  t:' + timer_idx);
+                    beep(sound)
+                }.bind(instance), time);
+            }
+
+            create_timeout = function(instance, milliseconds, sound, panel_idx, timer_idx)
+            {
+                return setTimeout(function(){
+                    exec_timers[panel_idx][timer_idx]['status'] = 'finished';
+                    instance.timer_logs.push('tm ok');
+                    beep(sound)
+                }.bind(instance), time);
+            }
+
+            seconds_to_hhmmss = function(seconds)
+            {
+                hh = 0
+                mm = 0
+                ss = 0
+
+                while (seconds >= 3600)
+                {
+                    hh += 1
+                    seconds -= 3600;
+                }
+
+                while (seconds >= 60)
+                {
+                    mm += 1;
+                    seconds -= 60;
+                }
+
+                ss = seconds;
+
+                return String(hh).padStart(2, '0') + ':' +
+                       String(mm).padStart(2, '0') + ':' +
+                       String(ss).padStart(2, '0');
+            }
+
+            // main interval, updates countdowns
+            scheduler = function() {
+                setInterval(function(){
+                    for (panel_idx in exec_timers)
                     {
-                        tinfo = exec_timers[panel_idx][timer_idx];
-                        if (tinfo['status'] == 'started')
+                        for (timer_idx in exec_timers[panel_idx])
                         {
-                            tinfo['time'] = tinfo['time'] - 1;
-                            str_time = seconds_to_hhmmss(tinfo['time']);
-                            $('#countdown-' + panel_idx + '-' + timer_idx).html(str_time);
-                            //console.log('#countdown-' + panel_idx + '-' + timer_idx)
+                            tinfo = exec_timers[panel_idx][timer_idx];
+                            if (tinfo['status'] == 'started')
+                            {
+                                tinfo['time'] = tinfo['time'] - 1;
+                                str_time = seconds_to_hhmmss(tinfo['time']);
+                                $('#countdown-' + panel_idx + '-' + timer_idx).html(str_time);
+                                //console.log('#countdown-' + panel_idx + '-' + timer_idx)
+                            }
                         }
                     }
-                }
-            }, 1000);
-        }
+                }, 1000);
+            }
 
-        // TODO: não estou muito confiante nessa função, melhorar implementação para 
-        // evitar race conditions.
-        save_interval = function()
-        {
-            if (last_change)
+            // TODO: não estou muito confiante nessa função, melhorar implementação para 
+            // evitar race conditions.
+            save_interval = function()
             {
-                now = Date.now();
-                if (now - last_change > 5000.0) // last change made +5s ago.
+                if (last_change)
                 {
-                    last_change = null;
-                    save_timers();
+                    now = Date.now();
+                    if (now - last_change > 5000.0) // last change made +5s ago.
+                    {
+                        last_change = null;
+                        save_timers();
+                    }
                 }
             }
-        }
 
 
-        application_load = function()
-        {
-            var app6 = new Vue({
-                el: '#app-6',
-                data: {
-                    data: example,
-                    timer_logs: ['logs...'],
-                },
-                watch: {
+            application_load = function()
+            {
+                var app6 = new Vue({
+                    el: '#app-6',
                     data: {
-                        handler: function(newval, oldval) {
-                            last_change = Date.now();
+                        data: example,
+                        timer_logs: ['logs...'],
+                    },
+                    watch: {
+                        data: {
+                            handler: function(newval, oldval) {
+                                last_change = Date.now();
+                            },
+                            deep: true,
+                        }
+                    },
+                    methods: {
+                        addTimer: function(timers)
+                        {
+                            timers.push({
+                                "unit": "",
+                                "time": "",
+                                "sound": "",
+                                "repeat": false,
+                            })
                         },
-                        deep: true,
-                    }
-                },
-                methods: {
-                    addTimer: function(timers)
-                    {
-                        timers.push({
-                            "unit": "",
-                            "time": "",
-                            "sound": "",
-                            "repeat": false,
-                        })
-                    },
-                    addPanel: function()
-                    {
-                        panel = {
-                            "title": "NewPanel",
-                            "timers": [],
-                        }
-
-                        this.addTimer(panel["timers"])
-                        this.data.push(panel)
-                    },
-                    removeTimer: function(timers, index)
-                    {
-                        timers.splice(index, 1)
-                    },
-                    removePanel: function(panels, index)
-                    {
-                        panels.splice(index, 1)
-                    },
-                    startTimers: function(panel_index)
-                    {
-                        this.stopTimers(panel_index);
-                        exec_timers[panel_index] = {}
-
-                        for (timer_index in this.data[panel_index]['timers'])
+                        addPanel: function()
                         {
-                            timer = this.data[panel_index]['timers'][timer_index];
-                            time = any_to_miliseconds(timer.time, timer.unit);
-                            var time_seconds = parseInt(time / 1000.)
-
-                            if (timer.repeat)
-                            {
-                                var sound_str = this.data[panel_index]['timers'][timer_index]['sound'];
-                                t = create_interval(this, time, sound_str, panel_index, timer_index, time_seconds)
-                                exec_timers[panel_index][timer_index] = {'type': 'i', 'var': t, 'status': 'started', 'time': time_seconds};;
+                            panel = {
+                                "title": "NewPanel",
+                                "timers": [],
                             }
-                            else
-                            {
-                                var sound_str = this.data[panel_index]['timers'][timer_index]['sound'];
-                                t = create_timeout(this, time, sound_str, panel_index, timer_index,)
-                                exec_timers[panel_index][timer_index] = {'type': 't', 'var': t, 'status': 'started', 'time': time_seconds}
-                            }
-                        }
 
-                    },
-                    stopTimers: function(panel_index)
-                    {
-                        if (panel_index in exec_timers)
+                            this.addTimer(panel["timers"])
+                            this.data.push(panel)
+                        },
+                        removeTimer: function(timers, index)
                         {
-                            for (var timer_ in exec_timers[panel_index])
+                            timers.splice(index, 1)
+                        },
+                        removePanel: function(panels, index)
+                        {
+                            panels.splice(index, 1)
+                        },
+                        startTimers: function(panel_index)
+                        {
+                            this.stopTimers(panel_index);
+                            exec_timers[panel_index] = {}
+
+                            for (timer_index in this.data[panel_index]['timers'])
                             {
-                                if (exec_timers[panel_index][timer_]['type'] === "i")
-                                    clearInterval(exec_timers[panel_index][timer_]['var']);
+                                timer = this.data[panel_index]['timers'][timer_index];
+                                time = any_to_miliseconds(timer.time, timer.unit);
+                                var time_seconds = parseInt(time / 1000.)
+
+                                if (timer.repeat)
+                                {
+                                    var sound_str = this.data[panel_index]['timers'][timer_index]['sound'];
+                                    t = create_interval(this, time, sound_str, panel_index, timer_index, time_seconds)
+                                    exec_timers[panel_index][timer_index] = {'type': 'i', 'var': t, 'status': 'started', 'time': time_seconds};;
+                                }
                                 else
-                                    clearTimeout(exec_timers[panel_index][timer_]['var']);
+                                {
+                                    var sound_str = this.data[panel_index]['timers'][timer_index]['sound'];
+                                    t = create_timeout(this, time, sound_str, panel_index, timer_index,)
+                                    exec_timers[panel_index][timer_index] = {'type': 't', 'var': t, 'status': 'started', 'time': time_seconds}
+                                }
                             }
+
+                        },
+                        stopTimers: function(panel_index)
+                        {
+                            if (panel_index in exec_timers)
+                            {
+                                for (var timer_ in exec_timers[panel_index])
+                                {
+                                    if (exec_timers[panel_index][timer_]['type'] === "i")
+                                        clearInterval(exec_timers[panel_index][timer_]['var']);
+                                    else
+                                        clearTimeout(exec_timers[panel_index][timer_]['var']);
+                                }
+                            }
+
+
                         }
-
-
                     }
+                });
+
+                scheduler();
+            }
+
+            window.onload = function ()
+            {
+                load_timers();
+                setInterval(save_interval, 3000);
+            }
+        </script>
+
+        <style>
+/*            .tpanel {
+                background: #f00
+            }
+
+            .ttitle {
+                background: #0f0
+            }
+
+            .trow {
+                background: #00f
+                margin: 12px;
+            } 
+
+            .tlogs {
+                background: #000;
+                color: #FFF;
+            } */
+
+            .card {
+                margin-bottom: 10px;
+            }
+
+            .bd-placeholder-img {
+                font-size: 1.125rem;
+                text-anchor: middle;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+            }
+
+            @media (min-width: 768px) {
+                .bd-placeholder-img-lg {
+                    font-size: 3.5rem;
                 }
-            });
+            }
+        </style>
+        <!-- Custom styles for this template -->
+        <!-- <link href="navbar-top.css" rel="stylesheet"> -->
+    </head>
 
-            scheduler();
-        }
+    <body>
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+            <a class="navbar-brand" href="#">Beeper</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contato</a>
+                    </li>
 
-        window.onload = function ()
-        {
-            load_timers();
-            setInterval(save_interval, 3000);
-        }
-    </script>
-
-    <style>
-        .tpanel {
-            background: #f00
-        }
-
-        .ttitle {
-            background: #0f0
-        }
-
-        .trow {
-            background: #00f
-        }
-
-        .tlogs {
-            background: #000;
-            color: #FFF;
-        }
-    </style>
-</head>
-
-<body>
-    <div id="app-6">
-        <button v-on:click="addPanel()">+ panel</button>
-        <div v-for="(panel, panel_idx) in data" class="tpanel">
-            <div class="ttitle">
-                <input type="text" v-model="panel.title" />
-                <div><a href="#" v-on:click="removePanel(data, index)">x</a></div>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="teste()">Teste</a>
+                    </li>
+                </ul>
             </div>
-            <div v-for="(timer, index) in panel.timers" class="trow">
-                <div>
-                    <select v-model="timer.unit">
-                        <option value="s">seconds</option>
-                        <option value="m">minutes</option>
-                        <option value="h">hours</option>
-                    </select>
+        </nav>
+
+        <main role="main" class="container" id="id_main_container">
+
+            <div id="app-6">
+                <div class="row">
+                    <button v-on:click="addPanel()" class="btn btn-primary">+ Panel</button>
                 </div>
-                <div><input v-model="timer.time" /></div>
-                <div>
-                    <select v-model="timer.sound">
-                        <option value="beep">Beep</option>
-                        <!-- <option value="audiofile1.wav">Good Morning</option> -->
-                        <option value="seatbelt">Seat Belt</option>
-                        <!-- <option value="audiofile3.wav">Chicken</option> -->
-                    </select>
+
+                <br />
+                <div v-for="(panel, panel_idx) in data" class="tpanel row">
+
+                    <div class="col-sm-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <input type="text" v-model="panel.title" />
+                                    <a href="#" v-on:click="removePanel(data, index)">x</a>
+                                </h5>
+                                <div class="card-text">
+                                    <div v-for="(timer, index) in panel.timers" class="trow row">
+                                        <div>
+                                            <select v-model="timer.unit" class="form-control form-control-sm">
+                                                <option value="s">seconds</option>
+                                                <option value="m">minutes</option>
+                                                <option value="h">hours</option>
+                                            </select>
+                                        </div>
+                                        <div><input v-model="timer.time" class="form-control form-control-sm"/></div>
+                                        <div>
+                                            <select v-model="timer.sound" class="form-control form-control-sm">
+                                                <option value="beep">Beep</option>
+                                                <!-- <option value="audiofile1.wav">Good Morning</option> -->
+                                                <option value="seatbelt">Seat Belt</option>
+                                                <!-- <option value="audiofile3.wav">Chicken</option> -->
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <input type="checkbox" v-model="timer.repeat" class="form-control form-control-sm" />
+                                        </div>
+                                        <div :id="'countdown-' + panel_idx + '-' + index">00:00:00</div>
+                                        <div><a href="#" v-on:click="removeTimer(panel.timers, index)">x</a></div>
+
+                                    </div>
+
+                                    <br />
+
+                                    <button v-on:click="addTimer(panel.timers)" class="btn btn-primary">+ timer</button>
+                                    <button v-if="true" v-on:click="startTimers(panel_idx)" class="btn btn-secondary">start</button>
+                                    <button v-if="true" v-on:click="stopTimers(panel_idx)" class="btn btn-secondary">stop</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br />
                 </div>
-                <div>
-                    <input type="checkbox" v-model="timer.repeat" />
-                </div>
-                <div :id="'countdown-' + panel_idx + '-' + index">00:00:00</div>
-                <div><a href="#" v-on:click="removeTimer(panel.timers, index)">x</a></div>
             </div>
-            <button v-on:click="addTimer(panel.timers)">+ timer</button>
-            <button v-if="true" v-on:click="startTimers(panel_idx)">start</button>
-            <button v-if="true" v-on:click="stopTimers(panel_idx)">stop</button>
-        </div>
-        <div v-for='text in timer_logs' class="tlogs">
-            <div>{{ text }}</div>
-        </div>
-    </div>
-</body>
+
+            <div v-for='text in timer_logs' class="tlogs alert alert-primary" role="alert">
+
+                <div>{{ text }}</div>
+            </div>
+       </main>
+
+    <body>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 </html>
+
+
 
