@@ -9,6 +9,7 @@
         <title>BEEPER</title>
 
         <!-- <link rel="canonical" href="https://getbootstrap.com/docs/4.3/examples/navbar-static/"> -->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
         <!-- Bootstrap core CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -369,21 +370,24 @@
                     <div class="col-sm-6">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">
-                                    <input type="text" v-model="panel.title" />
-                                    <a href="#" v-on:click="removePanel(data, index)">x</a>
-                                </h5>
+                                <div class="card-title">
+                                    <input type="text" v-model="panel.title" class="form-control form-control-sm col-sm-6 d-inline"/>
+
+                                    <button type="button" class="close" aria-label="Close" v-on:click="removePanel(data, panel_idx)">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
                                 <div class="card-text">
-                                    <div v-for="(timer, index) in panel.timers" class="trow row">
-                                        <div>
+                                    <div v-for="(timer, index) in panel.timers" class="form-row">
+                                        <div class="col">
                                             <select v-model="timer.unit" class="form-control form-control-sm">
                                                 <option value="s">seconds</option>
                                                 <option value="m">minutes</option>
                                                 <option value="h">hours</option>
                                             </select>
                                         </div>
-                                        <div><input v-model="timer.time" class="form-control form-control-sm"/></div>
-                                        <div>
+                                        <div class="col"><input v-model="timer.time" class="form-control form-control-sm"/></div>
+                                        <div class="col">
                                             <select v-model="timer.sound" class="form-control form-control-sm">
                                                 <option value="beep">Beep</option>
                                                 <!-- <option value="audiofile1.wav">Good Morning</option> -->
@@ -391,11 +395,14 @@
                                                 <!-- <option value="audiofile3.wav">Chicken</option> -->
                                             </select>
                                         </div>
-                                        <div>
+                                        <div class="col-sm-1">
                                             <input type="checkbox" v-model="timer.repeat" />
                                         </div>
-                                        <div :id="'countdown-' + panel_idx + '-' + index">00:00:00</div>
-                                        <div><a href="#" v-on:click="removeTimer(panel.timers, index)">x</a></div>
+                                        <div class="col"><span :id="'countdown-' + panel_idx + '-' + index">00:00:00</span>
+                                            <button type="button" class="close" aria-label="Close" v-on:click="removeTimer(panel.timers, index)">
+                                                <span aria-hidden="true"><i class="material-icons">delete</i></span>
+                                            </button>
+                                        </div>
 
                                     </div>
 
@@ -414,7 +421,6 @@
             </div>
 
             <div v-for='text in timer_logs' class="tlogs alert alert-primary" role="alert">
-
                 <div>{{ text }}</div>
             </div>
        </main>
