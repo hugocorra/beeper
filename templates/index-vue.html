@@ -272,9 +272,15 @@
                                 for (var timer_ in exec_timers[panel_index])
                                 {
                                     if (exec_timers[panel_index][timer_]['type'] === "i")
+                                    {
+                                        exec_timers[panel_index][timer_]['status'] = 'stopped'
                                         clearInterval(exec_timers[panel_index][timer_]['var']);
+                                    }
                                     else
+                                    {
+                                        exec_timers[panel_index][timer_]['status'] = 'stopped'
                                         clearTimeout(exec_timers[panel_index][timer_]['var']);
+                                    }
                                 }
                             }
 
@@ -313,7 +319,7 @@
             } */
 
             .card {
-                margin-bottom: 10px;
+                margin: 10px;
             }
 
             .form-row {
@@ -347,16 +353,16 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
+<!--                     <li class="nav-item active">
                         <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-                    </li>
-                    <li class="nav-item">
+                    </li> -->
+<!--                     <li class="nav-item">
                         <a class="nav-link" href="#">Contato</a>
                     </li>
 
                     <li class="nav-item">
                         <a class="nav-link" href="#" onclick="teste()">Teste</a>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
         </nav>
@@ -369,58 +375,60 @@
                 </div>
 
                 <br />
-                <div v-for="(panel, panel_idx) in data" class="tpanel row">
+                <div class="row">
+                    <div v-for="(panel, panel_idx) in data" class="tpanel col-sm-6s">
 
-                    <div class="col-sm-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="card-title">
-                                    <input type="text" v-model="panel.title" class="form-control form-control-sm col-sm-6 d-inline"/>
+                        <div class="">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="card-title">
+                                        <input type="text" v-model="panel.title" class="form-control form-control-sm col-sm-6 d-inline"/>
 
-                                    <button type="button" class="close" aria-label="Close" v-on:click="removePanel(data, panel_idx)">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="card-text">
-                                    <div v-for="(timer, index) in panel.timers" class="form-row">
-                                        <div class="col">
-                                            <select v-model="timer.unit" class="form-control form-control-sm">
-                                                <option value="s">seconds</option>
-                                                <option value="m">minutes</option>
-                                                <option value="h">hours</option>
-                                            </select>
-                                        </div>
-                                        <div class="col"><input v-model="timer.time" class="form-control form-control-sm"/></div>
-                                        <div class="col">
-                                            <select v-model="timer.sound" class="form-control form-control-sm">
-                                                <option value="beep">Beep</option>
-                                                <!-- <option value="audiofile1.wav">Good Morning</option> -->
-                                                <option value="seatbelt">Seat Belt</option>
-                                                <!-- <option value="audiofile3.wav">Chicken</option> -->
-                                            </select>
-                                        </div>
-                                        <div class="col-sm-1">
-                                            <input type="checkbox" v-model="timer.repeat" />
-                                        </div>
-                                        <div class="col"><span :id="'countdown-' + panel_idx + '-' + index">00:00:00</span>
-                                            <button type="button" class="close" aria-label="Close" v-on:click="removeTimer(panel.timers, index)">
-                                                <span aria-hidden="true"><i class="material-icons">delete</i></span>
-                                            </button>
-                                        </div>
-
+                                        <button type="button" class="close" aria-label="Close" v-on:click="removePanel(data, panel_idx)">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
                                     </div>
+                                    <div class="card-text">
+                                        <div v-for="(timer, index) in panel.timers" class="form-row">
+                                            <div class="col">
+                                                <select v-model="timer.unit" class="form-control form-control-sm">
+                                                    <option value="s">seconds</option>
+                                                    <option value="m">minutes</option>
+                                                    <option value="h">hours</option>
+                                                </select>
+                                            </div>
+                                            <div class="col"><input v-model="timer.time" class="form-control form-control-sm"/></div>
+                                            <div class="col">
+                                                <select v-model="timer.sound" class="form-control form-control-sm">
+                                                    <option value="beep">Beep</option>
+                                                    <!-- <option value="audiofile1.wav">Good Morning</option> -->
+                                                    <option value="seatbelt">Seat Belt</option>
+                                                    <!-- <option value="audiofile3.wav">Chicken</option> -->
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-1">
+                                                <input type="checkbox" v-model="timer.repeat" />
+                                            </div>
+                                            <div class="col"><span :id="'countdown-' + panel_idx + '-' + index">00:00:00</span>
+                                                <button type="button" class="close" aria-label="Close" v-on:click="removeTimer(panel.timers, index)">
+                                                    <span aria-hidden="true"><i class="material-icons">delete</i></span>
+                                                </button>
+                                            </div>
 
-                                    <br />
+                                        </div>
 
-                                    <button v-on:click="addTimer(panel.timers)" class="btn btn-primary">+ timer</button>
-                                    <button v-if="true" v-on:click="startTimers(panel_idx)" class="btn btn-secondary">start</button>
-                                    <button v-if="true" v-on:click="stopTimers(panel_idx)" class="btn btn-secondary">stop</button>
+                                        <br />
+
+                                        <button v-on:click="addTimer(panel.timers)" class="btn btn-primary">+ timer</button>
+                                        <button v-if="true" v-on:click="startTimers(panel_idx)" class="btn btn-info">start</button>
+                                        <button v-if="true" v-on:click="stopTimers(panel_idx)" class="btn btn-info">stop</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <br />
+                        <br />
+                    </div>
                 </div>
             </div>
 

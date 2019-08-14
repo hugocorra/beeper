@@ -23,8 +23,10 @@ Interface para que o usuário crie avisos sonoros que serão tocados conforme o 
     - [x] implementar countdown.
     - [x] testar countdown.
     - [x] implementar comunicação com o servidor.
-    - [ ] implementar interface mais bonita.
+    - [x] implementar interface mais bonita.
     - [ ] adicionar mais opções de som.
-    - [ ] implementar aviso visual de timer, para cada painel.
-    - [ ] implementar opção avançada onde usuário pode definir um texto que será exibido no aviso visual.
+    - [ ] integrar com opções no login no google e facebook.
+    - [ ] modo avançado
+        - [ ] implementar aviso visual de timer, para cada painel.
+        - [ ] implementar opção avançada onde usuário pode definir um texto que será exibido no aviso visual.
     
