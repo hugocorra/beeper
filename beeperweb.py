@@ -4,6 +4,12 @@ from bottle import TEMPLATE_PATH, jinja2_view, request, route, run, template, st
 TEMPLATE_PATH[:] = ['templates']
 
 
+@route('/login')
+@jinja2_view('login.html')
+def login():
+    return {}
+
+
 @route('/')
 @jinja2_view('index-vue.html')
 def index():
