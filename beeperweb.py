@@ -1,22 +1,25 @@
 import json
-from bottle import TEMPLATE_PATH, jinja2_view, request, route, run, template, static_file
 
-TEMPLATE_PATH[:] = ['templates']
+from flask import Flask, render_template, abort
 
-
-@route('/login')
-@jinja2_view('login.html')
-def login():
-    return {}
+app = Flask(__name__, static_url_path='/static')
 
 
-@route('/')
-@jinja2_view('index-vue.html')
+#TEMPLATE_PATH[:] = ['templates']
+
+
+# @app.route('/login')
+# #@jinja2_view('login.html')
+# def login():
+#     return {}
+
+@app.route('/')
+#@jinja2_view('index-vue.html')
 def index():
-    return {}
+    return render_template('index-vue.html')
 
 
-@route('/save', method='POST')
+@app.route('/save', methods=['POST'])
 def save():
     try:
         #from IPython import embed; embed()
@@ -29,7 +32,7 @@ def save():
     return {'satatus': 'OK'}
 
 
-@route('/load', method='GET')
+@app.route('/load', methods=['GET'])
 def load():
     try:
         with open('mydb.txt') as db:
@@ -40,9 +43,11 @@ def load():
     return {'status': 'OK', 'data': json_contents['data']}
 
 
-@route('/static/<path:path>')
+@app.route('/static/<path:path>')
 def static_files(path):
     return static_file(path, 'static')
 
 
-run(host='localhost', port=8080, debug=True)
+if __name__ == '__main__':
+    app.run(host='localhost', port=8080, debug=True)
+#run(host='localhost', port=8080, debug=True)
