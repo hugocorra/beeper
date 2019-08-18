@@ -1,10 +1,15 @@
 import json
+import os
 
 from flask import Flask, render_template, abort
 
 app = Flask(__name__, static_url_path='/static')
 
-
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
+GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
+GOOGLE_DISCOVERY_URL = (
+    "https://accounts.google.com/.well-known/openid-configuration"
+)
 #TEMPLATE_PATH[:] = ['templates']
 
 
@@ -12,6 +17,53 @@ app = Flask(__name__, static_url_path='/static')
 # #@jinja2_view('login.html')
 # def login():
 #     return {}
+
+
+
+
+########################
+
+
+# app.secret_key = os.environ.get("SECRET_KEY") or os.urandom(24)
+
+# # User session management setup
+# # https://flask-login.readthedocs.io/en/latest
+# login_manager = LoginManager()
+# login_manager.init_app(app)
+
+# # Naive database setup
+# try:
+#     init_db_command()
+# except sqlite3.OperationalError:
+#     # Assume it's already been created
+#     pass
+
+# # OAuth 2 client setup
+# client = WebApplicationClient(GOOGLE_CLIENT_ID)
+
+# # Flask-Login helper to retrieve a user from our db
+# @login_manager.user_loader
+# def load_user(user_id):
+#     return User.get(user_id)
+
+
+#########################
+
+@app.route("/login")
+def login():
+    # Find out what URL to hit for Google login
+    google_provider_cfg = get_google_provider_cfg()
+    authorization_endpoint = google_provider_cfg["authorization_endpoint"]
+
+    # Use library to construct the request for Google login and provide
+    # scopes that let you retrieve user's profile from Google
+    request_uri = client.prepare_request_uri(
+        authorization_endpoint,
+        redirect_uri=request.base_url + "/callback",
+        scope=["openid", "email", "profile"],
+    )
+    return redirect(request_uri)
+
 
 @app.route('/')
 #@jinja2_view('index-vue.html')
