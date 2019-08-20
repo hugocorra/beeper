@@ -1,15 +1,21 @@
 import json
 import os
 
-from flask import Flask, render_template, abort
+from flask import Flask, render_template, abort, redirect, url_for, session
+from flask_oauth import OAuth
+
 
 app = Flask(__name__, static_url_path='/static')
 
+REDIRECT_URI = '/authorized'
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
 GOOGLE_DISCOVERY_URL = (
     "https://accounts.google.com/.well-known/openid-configuration"
 )
+
+
+
 #TEMPLATE_PATH[:] = ['templates']
 
 
