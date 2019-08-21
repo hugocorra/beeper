@@ -2,17 +2,24 @@ import json
 import os
 
 from flask import Flask, render_template, abort, redirect, url_for, session
-from flask_oauth import OAuth
+# from flask_oauth import OAuth
+# from google_auth import login as glogin
+# from google_auth import logout as glogout
+
+import google_auth
 
 
 app = Flask(__name__, static_url_path='/static')
+app.secret_key = os.environ.get("FN_FLASK_SECRET_KEY")
 
-REDIRECT_URI = '/authorized'
-GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
-GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
-GOOGLE_DISCOVERY_URL = (
-    "https://accounts.google.com/.well-known/openid-configuration"
-)
+app.register_blueprint(google_auth.app)
+
+# REDIRECT_URI = '/authorized'
+# GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
+# GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
+# GOOGLE_DISCOVERY_URL = (
+#     "https://accounts.google.com/.well-known/openid-configuration"
+# )
 
 
 
@@ -55,20 +62,27 @@ GOOGLE_DISCOVERY_URL = (
 
 #########################
 
+@app.route("/login/callback")
+def login_callback():
+    return redirect('/')
+
+
 @app.route("/login")
 def login():
-    # Find out what URL to hit for Google login
-    google_provider_cfg = get_google_provider_cfg()
-    authorization_endpoint = google_provider_cfg["authorization_endpoint"]
+    return render_template('login2.html')
+    # # Find out what URL to hit for Google login
+    # google_provider_cfg = get_google_provider_cfg()
+    # authorization_endpoint = google_provider_cfg["authorization_endpoint"]
 
-    # Use library to construct the request for Google login and provide
-    # scopes that let you retrieve user's profile from Google
-    request_uri = client.prepare_request_uri(
-        authorization_endpoint,
-        redirect_uri=request.base_url + "/callback",
-        scope=["openid", "email", "profile"],
-    )
-    return redirect(request_uri)
+    # # Use library to construct the request for Google login and provide
+    # # scopes that let you retrieve user's profile from Google
+    # request_uri = client.prepare_request_uri(
+    #     authorization_endpoint,
+    #     redirect_uri=request.base_url + "/callback",
+    #     scope=["openid", "email", "profile"],
+    # )
+    # return redirect(request_uri)
+
 
 
 @app.route('/')
