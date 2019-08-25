@@ -411,8 +411,14 @@
                                                     <!-- <option value="audiofile3.wav">Chicken</option> -->
                                                 </select>
                                             </div>
-                                            <div class="col-sm-1">
-                                                <input type="checkbox" v-model="timer.repeat" />
+                                            <div class="col-sm-2">
+                                                <!-- <label for="xyz">Repeat</label>
+                                                <input type="checkbox" v-model="timer.repeat" id="xyz" /> -->
+                                                
+                                                <div class="custom-control custom-checkbox">
+                                                  <input type="checkbox" v-model="timer.repeat" class="custom-control-input" :id="'repeat-' + panel_idx + '-' + index">
+                                                  <label class="custom-control-label" :for="'repeat-' + panel_idx + '-' + index">Repeat</label>
+                                                </div>
                                             </div>
                                             <div class="col"><span :id="'countdown-' + panel_idx + '-' + index">00:00:00</span>
                                                 <button type="button" class="close" aria-label="Close" v-on:click="removeTimer(panel.timers, index)">
