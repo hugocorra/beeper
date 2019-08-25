@@ -18,19 +18,15 @@ CLIENT_ID = os.environ.get("FN_CLIENT_ID", False)
 CLIENT_SECRET = os.environ.get("FN_CLIENT_SECRET", False)
 
 
-# AUTH_REDIRECT_URI = 'https://127.0.0.1:8080/login/callback'
-# BASE_URI = 'https://127.0.0.1:8080'
-# CLIENT_ID = '813782014106-ltdme6ehsgmt9pofimbdel2rv7sg6heg.apps.googleusercontent.com'
-# CLIENT_SECRET = 'uC0AcRQl2qODzTz-FhuM-TT0'
-
-
 AUTH_TOKEN_KEY = 'auth_token'
 AUTH_STATE_KEY = 'auth_state'
 
 app = flask.Blueprint('google_auth', __name__)
 
+
 def is_logged_in():
     return True if AUTH_TOKEN_KEY in flask.session else False
+
 
 def build_credentials():
     if not is_logged_in():
@@ -45,6 +41,7 @@ def build_credentials():
                 client_secret=CLIENT_SECRET,
                 token_uri=ACCESS_TOKEN_URI)
 
+
 def get_user_info():
     credentials = build_credentials()
 
@@ -53,6 +50,7 @@ def get_user_info():
                         credentials=credentials)
 
     return oauth2_client.userinfo().get().execute()
+
 
 def no_cache(view):
     @functools.wraps(view)
@@ -64,6 +62,7 @@ def no_cache(view):
         return response
 
     return functools.update_wrapper(no_cache_impl, view)
+
 
 @app.route('/google/login')
 @no_cache
@@ -78,6 +77,7 @@ def login():
     flask.session.permanent = True
 
     return flask.redirect(uri, code=302)
+
 
 @app.route('/google/auth')
 @no_cache
@@ -100,6 +100,7 @@ def google_auth_redirect():
     flask.session[AUTH_TOKEN_KEY] = oauth2_tokens
 
     return flask.redirect(BASE_URI, code=302)
+
 
 @app.route('/google/logout')
 @no_cache

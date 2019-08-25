@@ -25,7 +25,7 @@ Interface para que o usuário crie avisos sonoros que serão tocados conforme o 
     - [x] implementar comunicação com o servidor.
     - [x] implementar interface mais bonita.
     - [ ] adicionar mais opções de som.
-    - [ ] integrar com opções no login no google e facebook.
+    - [ ] integrar com opções no login no google.
     - [ ] modo avançado
         - [ ] implementar aviso visual de timer, para cada painel.
         - [ ] implementar opção avançada onde usuário pode definir um texto que será exibido no aviso visual.
