@@ -216,6 +216,12 @@
                             deep: true,
                         }
                     },
+                    mounted: function() {
+                        $('[data-toggle="tooltip"]').tooltip({'trigger': 'hover'});
+                    },
+                    updated: function() {
+                        $('[data-toggle="tooltip"]').tooltip({'trigger': 'hover'});
+                    },
                     methods: {
                         addTimer: function(timers)
                         {
@@ -300,7 +306,7 @@
             window.onload = function ()
             {
                 load_timers();
-                setInterval(save_interval, 3000);
+                setInterval(save_interval, 3000);              
             }
         </script>
 
@@ -372,16 +378,18 @@
             </div>
         </nav>
 
-        <main role="main" class="container" id="id_main_container">
+        <main role="main" class="container" id="id_main_container" style="background: #f00">
 
             <div id="app-6">
                 <div class="row">
-                    <button v-on:click="addPanel()" class="btn btn-primary">+ Panel</button>
+                    <div class="col ml-2">
+                        <button v-on:click="addPanel()" class="btn btn-primary">+ Panel</button>
+                    </div>
                 </div>
 
                 <br />
                 <div class="row">
-                    <div v-for="(panel, panel_idx) in data" class="tpanel col-sm-6s">
+                    <div v-for="(panel, panel_idx) in data" class="tpanel col-6 m-0 p-0">
 
                         <div class="">
                             <div class="card">
@@ -397,14 +405,16 @@
                                         <div v-for="(timer, index) in panel.timers" class="form-row">
                                             <div class="col">
                                                 <select v-model="timer.unit" class="form-control form-control-sm">
+                                                    <option value="" disabled selected>unit</option>
                                                     <option value="s">seconds</option>
                                                     <option value="m">minutes</option>
                                                     <option value="h">hours</option>
                                                 </select>
                                             </div>
-                                            <div class="col"><input v-model="timer.time" class="form-control form-control-sm"/></div>
+                                            <div class="col"><input v-model="timer.time" class="form-control form-control-sm" placeholder="00:00:00"/></div>
                                             <div class="col">
                                                 <select v-model="timer.sound" class="form-control form-control-sm">
+                                                    <option value="" disabled selected>sound</option>
                                                     <option value="beep">Beep</option>
                                                     <!-- <option value="audiofile1.wav">Good Morning</option> -->
                                                     <option value="seatbelt">Seat Belt</option>
@@ -414,13 +424,22 @@
                                             <div class="col-sm-2">
                                                 <!-- <label for="xyz">Repeat</label>
                                                 <input type="checkbox" v-model="timer.repeat" id="xyz" /> -->
-                                                
-                                                <div class="custom-control custom-checkbox">
-                                                  <input type="checkbox" v-model="timer.repeat" class="custom-control-input" :id="'repeat-' + panel_idx + '-' + index">
-                                                  <label class="custom-control-label" :for="'repeat-' + panel_idx + '-' + index">Repeat</label>
+                                                <div class="row">
+                                                    <div class="col text-center" data-toggle="tooltip" data-placement="top" title="Repeat Timer">
+                                                        <div class="custom-control custom-checkbox">
+                                                          <input type="checkbox" v-model="timer.repeat" class="custom-control-input" :id="'repeat-' + panel_idx + '-' + index">
+                                                          <label class="custom-control-label" :for="'repeat-' + panel_idx + '-' + index"></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3" data-toggle="tooltip" data-placement="top" title="Show Message">
+                                                        <button type="button" class="close d-inline" aria-label="Close" v-on:click="">
+                                                            <span aria-hidden="true"><i class="material-icons">dvr</i></span>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="col"><span :id="'countdown-' + panel_idx + '-' + index">00:00:00</span>
+                                            <div class="col text-center">
+                                                <span :id="'countdown-' + panel_idx + '-' + index">00:00:00</span>
                                                 <button type="button" class="close" aria-label="Close" v-on:click="removeTimer(panel.timers, index)">
                                                     <span aria-hidden="true"><i class="material-icons">delete</i></span>
                                                 </button>
@@ -496,6 +515,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
+    <script type="text/javascript">
+
+    </script>
 </html>
 
 
