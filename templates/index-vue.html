@@ -378,7 +378,7 @@
             </div>
         </nav>
 
-        <main role="main" class="container" id="id_main_container" style="background: #f00">
+        <main role="main" class="container bg-light p-3" id="id_main_container">
 
             <div id="app-6">
                 <div class="row">
@@ -432,7 +432,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-3" data-toggle="tooltip" data-placement="top" title="Show Message">
-                                                        <button type="button" class="close d-inline" aria-label="Close" v-on:click="">
+                                                        <button type="button" class="close d-inline" aria-label="Close" v-on:click="" data-toggle="modal" data-target="#modal_text">
                                                             <span aria-hidden="true"><i class="material-icons">dvr</i></span>
                                                         </button>
                                                     </div>
@@ -467,6 +467,33 @@
             </div>
         </main>
 
+
+        <div class="modal" id="modal_text" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <div class="form-row">
+                            <div class="col-6">
+                                <input type="text" class="form-control" placeholder="Title">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col">
+                                <input type="text" class="form-control" placeholder="Text">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="col">
+                                <span class="text-muted font-italic small">(Press Enter key to confirm and close)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="modal" id="exampleModalLong" tabindex="-1" role="dialog">
             <div class="modal-dialog modal-dialog-centered" role="document">
