@@ -296,12 +296,31 @@
                             }
 
 
+                        },
+                        set_message_parameters: function(panel_index, timer_index) {
+                            //alert(panel_index);
+                            //alert(timer_index);
+                            $('#msg_panel_index').val(panel_index);
+                            $('#msg_timer_index').val(timer_index);
                         }
                     }
                 });
 
                 scheduler();
             }
+
+            enter_message = function (event) {
+                if (event.which == 13 || event.keyCode == 13) {
+                    $('#modal_text').modal('hide');
+                    //code to execute here
+                    //alert('enter')
+
+                    return false;
+                }
+
+                return true;
+            };
+
 
             window.onload = function ()
             {
@@ -432,7 +451,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-3" data-toggle="tooltip" data-placement="top" title="Show Message">
-                                                        <button type="button" class="close d-inline" aria-label="Close" v-on:click="" data-toggle="modal" data-target="#modal_text">
+                                                        <button type="button" class="close d-inline" aria-label="Close" v-on:click="set_message_parameters(panel_idx, index)" data-toggle="modal" data-target="#modal_text">
                                                             <span aria-hidden="true"><i class="material-icons">dvr</i></span>
                                                         </button>
                                                     </div>
@@ -477,12 +496,13 @@
                         </button>
                         <div class="form-row">
                             <div class="col-6">
-                                <input type="text" class="form-control" placeholder="Title">
+                                <input type="text" id="msg_title" class="form-control" placeholder="Title" onkeypress="enter_message(event)">
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="col">
-                                <input type="text" class="form-control" placeholder="Text">
+                                <input type="text" id="msg_message" class="form-control" placeholder="Text" onkeypress="enter_message(event)">
+                                <input type="hidden" id="msg_panel_index" /><input type="hidden" id="msg_timer_index" />
                             </div>
                         </div>
                         <div class="form-row">
