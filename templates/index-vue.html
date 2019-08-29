@@ -298,10 +298,20 @@
 
                         },
                         set_message_parameters: function(panel_index, timer_index) {
-                            //alert(panel_index);
-                            //alert(timer_index);
                             $('#msg_panel_index').val(panel_index);
                             $('#msg_timer_index').val(timer_index);
+
+                            var t = example[panel_index]['timers'][timer_index]
+                            if ('notification' in t) {
+                                $('#msg_title').val(t['notification']['title']);
+                                $('#msg_message').val(t['notification']['message']);
+                            }
+                            else {
+                                $('#msg_title').val('');
+                                $('#msg_message').val('');
+                            }
+
+                            $('#modal_text').modal('show');
                         }
                     }
                 });
@@ -312,8 +322,18 @@
             enter_message = function (event) {
                 if (event.which == 13 || event.keyCode == 13) {
                     $('#modal_text').modal('hide');
-                    //code to execute here
-                    //alert('enter')
+                    var title = $('#msg_title').val();
+                    var message = $('#msg_message').val();
+                    var panel_index = parseInt($('#msg_panel_index').val());
+                    var timer_index = parseInt($('#msg_timer_index').val());
+
+                    if (isNaN(panel_index) || isNaN(timer_index))
+                        return false;
+
+                    example[panel_index]["timers"][timer_index]['notification'] = {
+                        'title': title,
+                        'message': message
+                    }
 
                     return false;
                 }
@@ -451,7 +471,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-3" data-toggle="tooltip" data-placement="top" title="Show Message">
-                                                        <button type="button" class="close d-inline" aria-label="Close" v-on:click="set_message_parameters(panel_idx, index)" data-toggle="modal" data-target="#modal_text">
+                                                        <button type="button" class="close d-inline" aria-label="Close" v-on:click="set_message_parameters(panel_idx, index)"> <!-- data-toggle="modal" data-target="#modal_text">-->
                                                             <span aria-hidden="true"><i class="material-icons">dvr</i></span>
                                                         </button>
                                                     </div>
