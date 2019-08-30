@@ -199,10 +199,11 @@
                 }
             }
 
+            app6 = null;
 
             application_load = function()
             {
-                var app6 = new Vue({
+                app6 = new Vue({
                     el: '#app-6',
                     data: {
                         data: example,
@@ -330,11 +331,16 @@
                     if (isNaN(panel_index) || isNaN(timer_index))
                         return false;
 
-                    example[panel_index]["timers"][timer_index]['notification'] = {
-                        'title': title,
-                        'message': message
-                    }
+                    if (title || message)
+                        example[panel_index]["timers"][timer_index]['notification'] = {
+                            'title': title,
+                            'message': message
+                        }
+                    else
+                        delete example[panel_index]["timers"][timer_index]['notification'];
 
+                    app6.$forceUpdate();
+                    last_change = Date.now();
                     return false;
                 }
 
@@ -472,7 +478,14 @@
                                                     </div>
                                                     <div class="col-3" data-toggle="tooltip" data-placement="top" title="Show Message">
                                                         <button type="button" class="close d-inline" aria-label="Close" v-on:click="set_message_parameters(panel_idx, index)"> <!-- data-toggle="modal" data-target="#modal_text">-->
-                                                            <span aria-hidden="true"><i class="material-icons">dvr</i></span>
+                                                            <span aria-hidden="true">
+                                                                <span v-if="timer.notification" class="text-success">
+                                                                    <i class="material-icons">dvr</i>
+                                                                </span>
+                                                                <span v-else>
+                                                                    <i class="material-icons">dvr</i>
+                                                                </span>
+                                                            </span>
                                                         </button>
                                                     </div>
                                                 </div>
