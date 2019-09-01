@@ -31,6 +31,7 @@
                     icon: '/static/icons8-timer-64.png',
                     body: message,
                     tag: 'notify',
+                    silent: true,
                     renotify: true
                 });
             }
@@ -76,6 +77,7 @@
             }
 
             example = null;
+            timer_logs = []
             var exec_timers = {};
             var last_change = null;
 
@@ -135,7 +137,7 @@
             {
                 return setInterval(function(){
                     exec_timers[panel_idx][timer_idx]['time'] = time_seconds;
-                    instance.timer_logs.push('int ok p:' + panel_idx + '  t:' + timer_idx);
+                    instance.timer_logs.unshift('int ok p:' + panel_idx + '  t:' + timer_idx);
                     beep(sound)
 
                     if ('notification' in example[panel_idx]['timers'][timer_idx]) {
@@ -150,8 +152,14 @@
             {
                 return setTimeout(function(){
                     exec_timers[panel_idx][timer_idx]['status'] = 'finished';
-                    instance.timer_logs.push('tm ok');
-                    beep(sound)
+                    instance.timer_logs.unshift('tm ok');
+                    beep(sound);
+
+                    if ('notification' in example[panel_idx]['timers'][timer_idx]) {
+                        title = example[panel_idx]['timers'][timer_idx]['notification']['title'];
+                        message = example[panel_idx]['timers'][timer_idx]['notification']['message'];
+                        notify_me(title, message);
+                    }
                 }.bind(instance), time);
             }
 
@@ -221,9 +229,10 @@
             {
                 app6 = new Vue({
                     el: '#app-6',
+                    delimiters: ["<%","%>"],
                     data: {
                         data: example,
-                        timer_logs: ['logs...'],
+                        timer_logs: timer_logs,
                     },
                     watch: {
                         data: {
@@ -387,12 +396,12 @@
                 background: #00f
                 margin: 12px;
             } 
-
+*/
             .tlogs {
-                background: #000;
-                color: #FFF;
-            } */
-
+                max-height: 300px;
+                overflow: auto;
+            } 
+/*
             .card {
                 margin: 10px;
             }
@@ -453,7 +462,7 @@
 
                 <br />
                 <div class="row">
-                    <div v-for="(panel, panel_idx) in data" class="tpanel col-6 m-0 p-0">
+                    <div v-for="(panel, panel_idx) in data" class="tpanel col-6 m-0 p-0 pl-1 pr-1">
 
                         <div class="">
                             <div class="card">
@@ -531,10 +540,10 @@
                         <br />
                     </div>
                 </div>
-            </div>
 
-            <div v-for='text in timer_logs' class="tlogs alert alert-primary" role="alert">
-                <div>{{ text }}</div>
+                <div class="tlogs alert alert-primary" role="alert">
+                    <div v-for='text in timer_logs'><% text %></div>
+                </div>
             </div>
         </main>
 
