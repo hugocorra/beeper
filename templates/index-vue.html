@@ -10,6 +10,7 @@
 
 
         <title>BEEPER</title>
+        <link rel="shortcut icon" type="image/png" href="/static/icons8-timer-64.png"/>
 
         <!-- <link rel="canonical" href="https://getbootstrap.com/docs/4.3/examples/navbar-static/"> -->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -27,7 +28,7 @@
         <script>
             notify_me = function(title, message) {
                 var notification = new Notification(title, {
-                    icon: 'http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png',
+                    icon: '/static/icons8-timer-64.png',
                     body: message,
                     tag: 'notify',
                     renotify: true
