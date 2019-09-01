@@ -25,6 +25,15 @@
         <script src="https://unpkg.com/vue"></script>
         <script src="/static/js/sounds.js"></script>
         <script>
+            notify_me = function(title, message) {
+                var notification = new Notification(title, {
+                    icon: 'http://cdn.sstatic.net/stackexchange/img/logos/so/so-icon.png',
+                    body: message,
+                    tag: 'notify',
+                    renotify: true
+                });
+            }
+
             beep = function(sound_str) {
                 sounds[sound_str].play();
             }
@@ -127,6 +136,12 @@
                     exec_timers[panel_idx][timer_idx]['time'] = time_seconds;
                     instance.timer_logs.push('int ok p:' + panel_idx + '  t:' + timer_idx);
                     beep(sound)
+
+                    if ('notification' in example[panel_idx]['timers'][timer_idx]) {
+                        title = example[panel_idx]['timers'][timer_idx]['notification']['title'];
+                        message = example[panel_idx]['timers'][timer_idx]['notification']['message'];
+                        notify_me(title, message);
+                    }
                 }.bind(instance), time);
             }
 
@@ -351,7 +366,10 @@
             window.onload = function ()
             {
                 load_timers();
-                setInterval(save_interval, 3000);              
+                setInterval(save_interval, 3000);
+
+                if (Notification.permission !== 'granted')
+                    Notification.requestPermission();
             }
         </script>
 
