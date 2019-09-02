@@ -446,7 +446,13 @@
 -->
                 </ul>
                 <div class="my-2 my-lg-0">
-                  <button class="btn btn-outline-primary my-2 my-sm-0" data-toggle="modal" data-target="#exampleModalLong">Sign in</button>
+                    {% if user %}
+                        <a href="/logout">
+                            <button class="btn btn-outline-primary my-2 my-sm-0">Sign Out</button>
+                        </a>
+                    {% else %}
+                         <button class="btn btn-outline-primary my-2 my-sm-0" data-toggle="modal" data-target="#exampleModalLong">Sign in</button>
+                    {% endif %}
                 </div>
             </div>
         </nav>
