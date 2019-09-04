@@ -102,7 +102,7 @@ def google_auth_redirect():
     return flask.redirect(BASE_URI, code=302)
 
 
-@app.route('/xgoogle/logout')
+@app.route('/google/logout')
 @no_cache
 def logout():
     flask.session.pop(AUTH_TOKEN_KEY, None)
