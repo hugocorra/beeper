@@ -10,6 +10,7 @@
 
 
         <title>BEEPER</title>
+        <link rel="shortcut icon" type="image/png" href="/static/icons8-timer-64.png"/>
 
         <!-- <link rel="canonical" href="https://getbootstrap.com/docs/4.3/examples/navbar-static/"> -->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -25,6 +26,16 @@
         <script src="https://unpkg.com/vue"></script>
         <script src="/static/js/sounds.js"></script>
         <script>
+            notify_me = function(title, message) {
+                var notification = new Notification(title, {
+                    icon: '/static/icons8-timer-64.png',
+                    body: message,
+                    tag: 'notify',
+                    silent: true,
+                    renotify: true
+                });
+            }
+
             beep = function(sound_str) {
                 sounds[sound_str].play();
             }
@@ -66,6 +77,7 @@
             }
 
             example = null;
+            timer_logs = []
             var exec_timers = {};
             var last_change = null;
 
@@ -125,8 +137,14 @@
             {
                 return setInterval(function(){
                     exec_timers[panel_idx][timer_idx]['time'] = time_seconds;
-                    instance.timer_logs.push('int ok p:' + panel_idx + '  t:' + timer_idx);
+                    instance.timer_logs.unshift('int ok p:' + panel_idx + '  t:' + timer_idx);
                     beep(sound)
+
+                    if ('notification' in example[panel_idx]['timers'][timer_idx]) {
+                        title = example[panel_idx]['timers'][timer_idx]['notification']['title'];
+                        message = example[panel_idx]['timers'][timer_idx]['notification']['message'];
+                        notify_me(title, message);
+                    }
                 }.bind(instance), time);
             }
 
@@ -134,8 +152,14 @@
             {
                 return setTimeout(function(){
                     exec_timers[panel_idx][timer_idx]['status'] = 'finished';
-                    instance.timer_logs.push('tm ok');
-                    beep(sound)
+                    instance.timer_logs.unshift('tm ok');
+                    beep(sound);
+
+                    if ('notification' in example[panel_idx]['timers'][timer_idx]) {
+                        title = example[panel_idx]['timers'][timer_idx]['notification']['title'];
+                        message = example[panel_idx]['timers'][timer_idx]['notification']['message'];
+                        notify_me(title, message);
+                    }
                 }.bind(instance), time);
             }
 
@@ -199,14 +223,16 @@
                 }
             }
 
+            app6 = null;
 
             application_load = function()
             {
-                var app6 = new Vue({
+                app6 = new Vue({
                     el: '#app-6',
+                    delimiters: ["<%","%>"],
                     data: {
                         data: example,
-                        timer_logs: ['logs...'],
+                        timer_logs: timer_logs,
                     },
                     watch: {
                         data: {
@@ -298,10 +324,20 @@
 
                         },
                         set_message_parameters: function(panel_index, timer_index) {
-                            //alert(panel_index);
-                            //alert(timer_index);
                             $('#msg_panel_index').val(panel_index);
                             $('#msg_timer_index').val(timer_index);
+
+                            var t = example[panel_index]['timers'][timer_index]
+                            if ('notification' in t) {
+                                $('#msg_title').val(t['notification']['title']);
+                                $('#msg_message').val(t['notification']['message']);
+                            }
+                            else {
+                                $('#msg_title').val('');
+                                $('#msg_message').val('');
+                            }
+
+                            $('#modal_text').modal('show');
                         }
                     }
                 });
@@ -312,9 +348,24 @@
             enter_message = function (event) {
                 if (event.which == 13 || event.keyCode == 13) {
                     $('#modal_text').modal('hide');
-                    //code to execute here
-                    //alert('enter')
+                    var title = $('#msg_title').val();
+                    var message = $('#msg_message').val();
+                    var panel_index = parseInt($('#msg_panel_index').val());
+                    var timer_index = parseInt($('#msg_timer_index').val());
 
+                    if (isNaN(panel_index) || isNaN(timer_index))
+                        return false;
+
+                    if (title || message)
+                        example[panel_index]["timers"][timer_index]['notification'] = {
+                            'title': title,
+                            'message': message
+                        }
+                    else
+                        delete example[panel_index]["timers"][timer_index]['notification'];
+
+                    app6.$forceUpdate();
+                    last_change = Date.now();
                     return false;
                 }
 
@@ -325,7 +376,10 @@
             window.onload = function ()
             {
                 load_timers();
-                setInterval(save_interval, 3000);              
+                setInterval(save_interval, 3000);
+
+                if (Notification.permission !== 'granted')
+                    Notification.requestPermission();
             }
         </script>
 
@@ -342,12 +396,12 @@
                 background: #00f
                 margin: 12px;
             } 
-
+*/
             .tlogs {
-                background: #000;
-                color: #FFF;
-            } */
-
+                max-height: 300px;
+                overflow: auto;
+            } 
+/*
             .card {
                 margin: 10px;
             }
@@ -392,7 +446,13 @@
 -->
                 </ul>
                 <div class="my-2 my-lg-0">
-                  <button class="btn btn-outline-primary my-2 my-sm-0" data-toggle="modal" data-target="#exampleModalLong">Sign in</button>
+                    {% if user %}
+                        <a href="/logout">
+                            <button class="btn btn-outline-primary my-2 my-sm-0">Sign Out</button>
+                        </a>
+                    {% else %}
+                         <button class="btn btn-outline-primary my-2 my-sm-0" data-toggle="modal" data-target="#exampleModalLong">Sign in</button>
+                    {% endif %}
                 </div>
             </div>
         </nav>
@@ -408,7 +468,7 @@
 
                 <br />
                 <div class="row">
-                    <div v-for="(panel, panel_idx) in data" class="tpanel col-6 m-0 p-0">
+                    <div v-for="(panel, panel_idx) in data" class="tpanel col-6 m-0 p-0 pl-1 pr-1">
 
                         <div class="">
                             <div class="card">
@@ -451,8 +511,15 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-3" data-toggle="tooltip" data-placement="top" title="Show Message">
-                                                        <button type="button" class="close d-inline" aria-label="Close" v-on:click="set_message_parameters(panel_idx, index)" data-toggle="modal" data-target="#modal_text">
-                                                            <span aria-hidden="true"><i class="material-icons">dvr</i></span>
+                                                        <button type="button" class="close d-inline" aria-label="Close" v-on:click="set_message_parameters(panel_idx, index)"> <!-- data-toggle="modal" data-target="#modal_text">-->
+                                                            <span aria-hidden="true">
+                                                                <span v-if="timer.notification" class="text-success">
+                                                                    <i class="material-icons">dvr</i>
+                                                                </span>
+                                                                <span v-else>
+                                                                    <i class="material-icons">dvr</i>
+                                                                </span>
+                                                            </span>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -479,10 +546,10 @@
                         <br />
                     </div>
                 </div>
-            </div>
 
-            <div v-for='text in timer_logs' class="tlogs alert alert-primary" role="alert">
-                <div>{{ text }}</div>
+                <div class="tlogs alert alert-primary" role="alert">
+                    <div v-for='text in timer_logs'><% text %></div>
+                </div>
             </div>
         </main>
 
