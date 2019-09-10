@@ -76,6 +76,8 @@ def login():
     flask.session[AUTH_STATE_KEY] = state
     flask.session.permanent = True
 
+    print('login', flask.session.keys())
+
     return flask.redirect(uri, code=302)
 
 
@@ -84,6 +86,8 @@ def login():
 def google_auth_redirect():
     req_state = flask.request.args.get('state', default=None, type=None)
 
+
+    print('>>google_auth_redirect', flask.session.keys())
     if req_state != flask.session[AUTH_STATE_KEY]:
         response = flask.make_response('Invalid state parameter', 401)
         return response
@@ -107,5 +111,4 @@ def google_auth_redirect():
 def logout():
     flask.session.pop(AUTH_TOKEN_KEY, None)
     flask.session.pop(AUTH_STATE_KEY, None)
-
     return flask.redirect(BASE_URI, code=302)

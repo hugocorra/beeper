@@ -30,10 +30,15 @@ def index():
 @app.route('/save', methods=['POST'])
 def save():
     try:
-        # from IPython import embed; embed()
-        with open('mydb.txt', 'w') as db:
-            print('salvando...')
-            json.dump(request.json, db)
+        if google_auth.is_logged_in():
+            user = google_auth.get_user_info().get('username', None)
+            print(google_auth.get_user_info())
+
+            if user is not None:
+                filename = 'mydb_{}.txt'.format()
+                with open(filename, 'w') as db:
+                    print('salvando...')
+                    json.dump(request.json, db)
     except Exception as e:
         return {'status': 'NOK', 'what': str(e)}
 
@@ -43,7 +48,18 @@ def save():
 @app.route('/load', methods=['GET'])
 def load():
     try:
-        with open('mydb.txt') as db:
+        filename = 'mydb.txt'
+
+        if google_auth.is_logged_in():
+            user = google_auth.get_user_info().get('username', None)
+            print(google_auth.get_user_info())
+
+            if user is not None:
+                filename_user = 'mydb_{}.txt'.format()
+                if os.path.isfile(filename_user):
+                    filename = filename_user
+
+        with open(filename) as db:
             json_contents = json.load(db)
     except Exception as e:
         return {'status': 'NOK', 'what': str(e)}
