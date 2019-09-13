@@ -2,13 +2,13 @@ import json
 import os
 
 from flask import Flask, render_template, abort, redirect, url_for, session, request
-import google_auth
-
+from google.oauth2 import id_token
+from google.auth.transport import requests
 
 app = Flask(__name__, static_url_path='/static')
 app.secret_key = os.environ.get("FN_FLASK_SECRET_KEY")
 
-app.register_blueprint(google_auth.app)
+#app.register_blueprint(google_auth.app)
 
 #########################
 
@@ -110,39 +110,27 @@ def authme():
     return render_template('authme.html')
 
 
-@app.route('/tokensignin', methods=['POST'])
-def tokensignin():
-    from google.oauth2 import id_token
-    from google.auth.transport import requests
-
-    # (Receive token by HTTPS POST)
-    # ...
-
+@app.route('/google_auth_tokensignin', methods=['POST'])
+def google_auth_tokensignin():
     try:
         token = request.form['idtoken']
-        # Specify the CLIENT_ID of the app that accesses the backend:
-        idinfo = id_token.verify_oauth2_token(token, requests.Request(), '813782014106-ltdme6ehsgmt9pofimbdel2rv7sg6heg.apps.googleusercontent.com')
 
-        # Or, if multiple clients access the backend server:
-        # idinfo = id_token.verify_oauth2_token(token, requests.Request())
-        # if idinfo['aud'] not in [CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]:
-        #     raise ValueError('Could not verify audience.')
+        # Specify the CLIENT_ID of the app that accesses the backend:
+        idinfo = id_token.verify_oauth2_token(token, requests.Request(), 
+            '813782014106-ltdme6ehsgmt9pofimbdel2rv7sg6heg.apps.googleusercontent.com') #TODO: ler da variável de ambiente.
 
         if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
             raise ValueError('Wrong issuer.')
 
-        from IPython import embed; embed()
-        # If auth request is from a G Suite domain:
-        # if idinfo['hd'] != GSUITE_DOMAIN_NAME:
-        #     raise ValueError('Wrong hosted domain.')
+        session['user'] = idinfo
 
         # ID token is valid. Get the user's Google Account ID from the decoded token.
         userid = idinfo['sub']
+        return idinfo
     except ValueError:
         # Invalid token
         pass
 
-    return redirect('/')
 
 @app.route('/static/<path:path>')
 def static_files(path):

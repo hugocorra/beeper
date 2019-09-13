@@ -9,11 +9,32 @@
                 var id_token = googleUser.getAuthResponse().id_token;
 
                 var xhr = new XMLHttpRequest();
-                xhr.open('POST', '/tokensignin');
+                xhr.open('POST', '/google_auth_tokensignin');
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                xhr.onload = function() {
-                  console.log('Signed in as: ' + xhr.responseText);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState==4) {
+                        if (xhr.status==200){
+                            var response = JSON.parse(xhr.responseText);
+                            console.log('successful');
+                            console.log('Signed in as: ' + xhr.responseText);
+                        }
+                        else
+                            console.log('failed #a');
+                    }
                 };
+
+                // xhr.onreadystatechange = function() {
+                //     if (xhr.readyState === 4) {
+                //         var response = JSON.parse(xhr.responseText);
+                //         if (xhr.status === 200 && response.status === 'OK') {
+                //             console.log('successful');
+                //         }
+                //         else {
+                //             console.log('failed');
+                //         }
+                //     }
+                // };
+
                 xhr.send('idtoken=' + id_token);
             }
 
