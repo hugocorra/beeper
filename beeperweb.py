@@ -107,7 +107,7 @@ def load():
 
 @app.route('/authme')
 def authme():
-    return render_template('authme.html')
+    return render_template('authme.html', user=session.get('user'))
 
 
 @app.route('/google_auth_tokensignin', methods=['POST'])
@@ -130,6 +130,13 @@ def google_auth_tokensignin():
     except ValueError:
         # Invalid token
         pass
+
+
+@app.route('/google_signout')
+def google_signout():
+    session.pop('user')
+    return 'OK'
+
 
 
 @app.route('/static/<path:path>')

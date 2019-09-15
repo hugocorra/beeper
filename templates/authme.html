@@ -1,7 +1,10 @@
 <html>
     <meta name="google-signin-client_id" content="813782014106-ltdme6ehsgmt9pofimbdel2rv7sg6heg.apps.googleusercontent.com">
     <head>
-        <script src="https://apis.google.com/js/platform.js" async defer></script>
+        <!-- <script src="https://apis.google.com/js/platform.js" async defer></script> -->
+        <script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
 
 
         <script type="text/javascript">
@@ -23,18 +26,6 @@
                     }
                 };
 
-                // xhr.onreadystatechange = function() {
-                //     if (xhr.readyState === 4) {
-                //         var response = JSON.parse(xhr.responseText);
-                //         if (xhr.status === 200 && response.status === 'OK') {
-                //             console.log('successful');
-                //         }
-                //         else {
-                //             console.log('failed');
-                //         }
-                //     }
-                // };
-
                 xhr.send('idtoken=' + id_token);
             }
 
@@ -43,17 +34,34 @@
                 var auth2 = gapi.auth2.getAuthInstance();
                 auth2.signOut().then(function () {
                   console.log('User signed out.');
+                    $.get( "/google_signout", function( data ) {
+                      alert( "Load was performed." );
+                    });
+
                 });
               }
+
+
+            function onLoad() {
+                  gapi.load('auth2', function() {
+                    gapi.auth2.init();
+                  });
+                }
 </script>
         </script>
     </head>
 
     <body>
         <div style="">
-            <div class="g-signin2" data-onsuccess="onSignIn"></div>
 
-            <a href="#" onclick="signOut();">Sign out</a>
+            {% if user %}
+                {{ user.name }}
+                <br/>
+                <a href="#" onclick="signOut();">Sign out</a>
+            {% else %}
+                <div class="g-signin2" data-onsuccess="onSignIn"></div>
+            {% endif %}
+
         </div>
     </body>
 
