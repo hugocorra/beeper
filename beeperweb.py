@@ -40,15 +40,8 @@ def logout():
 
 @app.route('/')
 def index():
-    if google_auth.is_logged_in():
-        user = google_auth.get_user_info()
-        session['USER'] = user
-        print('user', session['USER'])
-    else:
-        print('client not logged in')
-        user = None
-
-
+    user = session.get('user')
+    print(user)
     return render_template('index-vue.html', user=user)
 
 
@@ -56,19 +49,13 @@ def index():
 def save():
     outfile = 'mydb.txt'
 
-    if 'USER' in session:
-        outfile = 'mydb_{}.txt'.format(session['USER']['id'])
+    if 'user' in session:
+        outfile = 'mydb_{}.txt'.format(session['user']['email'])
 
     try:
-        if google_auth.is_logged_in():
-            user = google_auth.get_user_info().get('username', None)
-            print(google_auth.get_user_info())
-
-            if user is not None:
-                filename = 'mydb_{}.txt'.format()
-                with open(filename, 'w') as db:
-                    print('salvando...')
-                    json.dump(request.json, db)
+        with open(outfile, 'w') as db:
+            print('salvando...')
+            json.dump(request.json, db)
 
     except Exception as e:
         return {'status': 'NOK', 'what': str(e)}
@@ -80,26 +67,17 @@ def save():
 def load():
     infile = 'mydb.txt'
 
-    if 'USER' in session:
-        infile_user = 'mydb_{}.txt'.format(session['USER']['id'])
+    if 'user' in session:
+        print(session['user'])
+        infile_user = 'mydb_{}.txt'.format(session['user']['email'])
         if os.path.isfile(infile_user):
             infile = infile_user
 
     try:
-        filename = 'mydb.txt'
-
-        if google_auth.is_logged_in():
-            user = google_auth.get_user_info().get('username', None)
-            print(google_auth.get_user_info())
-
-            if user is not None:
-                filename_user = 'mydb_{}.txt'.format()
-                if os.path.isfile(filename_user):
-                    filename = filename_user
-
-        with open(filename) as db:
+        with open(infile) as db:
             json_contents = json.load(db)
     except Exception as e:
+        raise
         return {'status': 'NOK', 'what': str(e)}
 
     return {'status': 'OK', 'data': json_contents['data']}
