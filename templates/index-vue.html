@@ -30,7 +30,7 @@
                 var id_token = googleUser.getAuthResponse().id_token;
 
                 var xhr = new XMLHttpRequest();
-                xhr.open('POST', '/google_auth_tokensignin');
+                xhr.open('POST', '/google_auth');
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState==4) {

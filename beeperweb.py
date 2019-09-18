@@ -8,35 +8,6 @@ from google.auth.transport import requests
 app = Flask(__name__, static_url_path='/static')
 app.secret_key = os.environ.get("FN_FLASK_SECRET_KEY")
 
-#app.register_blueprint(google_auth.app)
-
-#########################
-
-@app.route("/login/callback")
-def login_callback():
-    if google_auth.is_logged_in():
-        session['USER'] = google_auth.get_user_info()
-        print('usuario está logado')
-
-    return redirect('/')
-
-
-@app.route("/login")
-def login():
-    return render_template('login2.html')
-
-
-@app.route("/logout")
-def logout():
-    if google_auth.is_logged_in():
-        redirect_dest = redirect('/google/logout')
-        if 'USER' in session:
-            del session['USER']
-
-        return redirect_dest
-
-    return redirect('/')
-
 
 @app.route('/')
 def index():
@@ -83,13 +54,8 @@ def load():
     return {'status': 'OK', 'data': json_contents['data']}
 
 
-@app.route('/authme')
-def authme():
-    return render_template('authme.html', user=session.get('user'))
-
-
-@app.route('/google_auth_tokensignin', methods=['POST'])
-def google_auth_tokensignin():
+@app.route('/google_auth', methods=['POST'])
+def google_auth():
     try:
         token = request.form['idtoken']
 
